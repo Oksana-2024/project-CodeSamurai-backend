@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
 import { getEnvVar } from './utils/getEnvVar.js';
 import { notFoundHandler } from './midllewares/notFoundHandler.js';
 import { errorHandler } from './midllewares/errorHandler.js';
@@ -10,6 +12,8 @@ export const startServer = () => {
   const app = express();
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
+
   // app.use('/users');
   // app.use('/transactions');
   app.use(errorHandler);
