@@ -15,16 +15,17 @@ const transactionsSchema = new Schema(
     category: {
       type: String,
       enum: [
-        'Main expenses',
-        'Products',
-        'Car',
-        'Self care',
-        'Child care',
-        'Household products',
-        'Education',
-        'Leisure',
-        'Other expenses',
-        'Entertainment',
+        'income',
+        'main expenses',
+        'products',
+        'car',
+        'self care',
+        'child care',
+        'household products',
+        'education',
+        'leisure',
+        'other expenses',
+        'entertainment',
       ],
       required: true,
       default: 'Products',
@@ -50,4 +51,4 @@ const transactionsSchema = new Schema(
   },
 );
 
-export const ContactsCollection = model('transaction', transactionsSchema);
+export const TransactionsCollection = model('transaction', transactionsSchema);

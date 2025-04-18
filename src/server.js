@@ -14,8 +14,8 @@ export const startServer = () => {
   app.use(cors());
   app.use(cookieParser());
 
-  // app.use('/users');
-  // app.use('/transactions');
+  // app.use('/auth');
+  // app.use('/wallet');
   app.use(errorHandler);
   app.all(/.*/, notFoundHandler);
 
