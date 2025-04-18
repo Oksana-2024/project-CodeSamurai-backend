@@ -1,6 +1,9 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
+
 import { UsersCollection } from '../db/models/Users';
+
+// import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const registerUser = async (userData) => {
   const user = await UsersCollection.findOne({ email: userData.email });
@@ -11,7 +14,7 @@ export const registerUser = async (userData) => {
       'This email address is already in use. Please try another one',
     );
 
-  const encryptedPassword = bcrypt.hash(userData.password, 10);
+  const encryptedPassword = await bcrypt.hash(userData.password, 10);
 
   return await UsersCollection.create({
     ...userData,
@@ -32,5 +35,23 @@ export const loginUser = async (userData) => {
 
   if (!isPwdEqual) throw createHttpError(401, 'Email or password is incorrect');
 
-  // створення сесії чи апдейт юзера
+  //   const token = jwt.sign(
+  //     { id: user._id, email: user.email },
+  //     getEnvVar('JWT_SECRET'),
+  //     { expiresIn: '1d' },
+  //   );
+
+  //   return await UsersCollection.findByIdAndUpdate(
+  //     user._id,
+  //     { token },
+  //     { new: true },
+  //   );
+};
+
+export const logoutUser = async (userId) => {
+  return await UsersCollection.findByIdAndUpdate(
+    userId,
+    { token: null },
+    { new: true },
+  );
 };

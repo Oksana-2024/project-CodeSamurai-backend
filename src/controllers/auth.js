@@ -1,20 +1,27 @@
-import createHttpError from 'http-errors';
-import bcrypt from 'bcrypt';
-import { loginUser, registerUser } from '../services/auth';
+import { registerUser, loginUser, logoutUser } from '../services/auth';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
 
-  res.status(201).json({ user: user.name, email: user.email });
+  res.status(201).json({
+    user: {
+      name: user.name,
+      email: user.email,
+    },
+  });
 };
 
 export const loginUserController = async (req, res) => {
   const user = await loginUser(req.body);
 
-  res.json({
-    user: {},
-    // token: '',
+  res.status(201).json({
+    user: { name: user.name, email: user.email },
+    token: user.token,
   });
 };
 
-export const logoutUserController = async (req, res) => {};
+export const logoutUserController = async (req, res) => {
+  await logoutUser(req.user.id);
+
+  res.status(204).send();
+};
