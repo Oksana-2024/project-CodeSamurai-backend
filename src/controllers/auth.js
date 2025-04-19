@@ -2,8 +2,6 @@ import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 
 import {
-  // registerUser,
-  // loginUser,
   logoutUser,
   findUserByEmail,
   createUser,
