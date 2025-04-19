@@ -24,6 +24,7 @@ export const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.log(error);
     return next(createHttpError(401, 'Invalid or expired token'));
   }
 };
