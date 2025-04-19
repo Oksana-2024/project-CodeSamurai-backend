@@ -1,0 +1,54 @@
+tags:
+  - Auth
+summary: Register a new user
+operationId: registerUser
+description:
+  'This endpoint allows a new user to create an account by providing a name, valid email, and password.
+  The email must be unique.
+  Password must be at least 4 characters and no more than 64.
+  On successful registration, the user receives their name, email, and an authentication token.'
+security: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            description: "User's name"
+            type: string
+            example: 'John Doe'
+          email:
+            description: "User's email"
+            type: string
+            format: email
+            example: 'johnd@gmail.com'
+          password:
+            description: "User's password"
+            type: string
+            format: password
+            example: '123456'
+responses:
+  '201':
+    description: 'User successfully registered'
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user:
+              type: object
+              $ref: '../../components/schemas/user.yaml'
+            token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '409':
+    $ref: '../../components/responses/409.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

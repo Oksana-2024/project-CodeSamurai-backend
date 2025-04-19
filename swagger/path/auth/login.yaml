@@ -1,0 +1,49 @@
+tags:
+  - Auth
+summary: Login an existing user
+operationId: loginUser
+description:
+  "This endpoint allows an existing user to log in by providing a valid email and password.
+  On success, it returns the user's name, email, and a JWT authentication token."
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            maxLength: 64
+            example: sarah@gmail.com
+          password:
+            type: string
+            format: password
+            minLength: 4
+            maxLength: 64
+            example: mySecurePassword
+responses:
+  '200':
+    description: 'User successfully logged in'
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user:
+              type: object
+              $ref: '../../components/schemas/user.yaml'
+            token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  '401':
+    $ref: '../../components/responses/400.yaml'
+  '400':
+    description: Validation error
+  '500':
+    description: Internal server error
