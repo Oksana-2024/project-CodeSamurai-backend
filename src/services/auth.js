@@ -1,9 +1,10 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import { UsersCollection } from '../db/models/Users';
 
-// import { getEnvVar } from '../utils/getEnvVar.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const registerUser = async (userData) => {
   const user = await UsersCollection.findOne({ email: userData.email });
@@ -35,17 +36,17 @@ export const loginUser = async (userData) => {
 
   if (!isPwdEqual) throw createHttpError(401, 'Email or password is incorrect');
 
-  //   const token = jwt.sign(
-  //     { id: user._id, email: user.email },
-  //     getEnvVar('JWT_SECRET'),
-  //     { expiresIn: '1d' },
-  //   );
+  const token = jwt.sign(
+    { id: user._id, email: user.email },
+    getEnvVar('JWT_SECRET'),
+    { expiresIn: '1d' },
+  );
 
-  //   return await UsersCollection.findByIdAndUpdate(
-  //     user._id,
-  //     { token },
-  //     { new: true },
-  //   );
+  return await UsersCollection.findByIdAndUpdate(
+    user._id,
+    { token },
+    { new: true },
+  );
 };
 
 export const logoutUser = async (userId) => {

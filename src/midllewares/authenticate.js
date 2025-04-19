@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import jwt from 'jsonwebtoken';
 
 import { UsersCollection } from '../db/models/Users.js';
 
@@ -13,13 +14,16 @@ export const authenticate = async (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
-  const decodedUser = jwt.verify(token, getEnvVar('JWT_SECRET'));
-  const user = await UsersCollection.findById(decodedUser.id);
+  try {
+    const decodedUser = jwt.verify(token, getEnvVar('JWT_SECRET'));
+    const user = await UsersCollection.findById(decodedUser.id);
 
-  if (!user) {
-    return next(createHttpError(401, 'User not found'));
+    if (!user) {
+      return next(createHttpError(401, 'User not found'));
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    return next(createHttpError(401, 'Invalid or expired token'));
   }
-  req.user = user;
-
-  next();
 };

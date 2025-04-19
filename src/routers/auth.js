@@ -10,8 +10,11 @@ import {
   loginUserController,
   logoutUserController,
 } from '../controllers/auth.js';
+import { authenticate } from '../midllewares/authenticate.js';
 
 const router = Router();
+
+router.use(authenticate);
 
 router.post(
   '/register',
@@ -19,11 +22,11 @@ router.post(
   ctrlWrapper(registerUserController),
 );
 router.post(
-  '/login',
+  '/auth/login',
   validateBody(loginUserSchema),
   ctrlWrapper(loginUserController),
 );
-router.post('/logout', ctrlWrapper(logoutUserController));
+router.post('/auth/logout', ctrlWrapper(logoutUserController));
 
 export default router;
 
