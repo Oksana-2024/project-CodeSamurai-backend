@@ -2,6 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
+import userRouter from './routers/user.js';
+import walletRouter from './routers/wallet.js';
+
+import { UPLOAD_DIR } from './constans/index.js';
+
 import { getEnvVar } from './utils/getEnvVar.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -15,7 +20,9 @@ export const startServer = () => {
   app.use(cookieParser());
 
   // app.use('/auth');
-  // app.use('/wallet');
+  app.use('/wallet', walletRouter);
+  app.use('/user', userRouter);
+  app.use('/uploads', express.static(UPLOAD_DIR));
   app.use(errorHandler);
   app.all(/.*/, notFoundHandler);
 

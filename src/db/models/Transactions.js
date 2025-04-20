@@ -37,12 +37,13 @@ const transactionsSchema = new Schema(
     sum: {
       type: Number,
       required: true,
-      default: '0',
+      default: 0,
     },
 
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'users',
     },
   },
   {
