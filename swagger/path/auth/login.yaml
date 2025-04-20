@@ -41,9 +41,11 @@ responses:
             token:
               type: string
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-  '401':
-    $ref: '../../components/responses/400.yaml'
   '400':
-    description: Validation error
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '404':
+    $ref: '../../components/responses/404.yaml'
   '500':
-    description: Internal server error
+    $ref: '../../components/responses/500.yaml'
