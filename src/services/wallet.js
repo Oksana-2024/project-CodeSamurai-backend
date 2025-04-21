@@ -4,7 +4,7 @@ import { TransactionsCollection } from '../db/models/Transactions.js';
 import { UsersCollection } from '../db/models/Users.js';
 
 export const getTransactions = async (userId) => {
-  const transactions = TransactionsCollection.find({ userId });
+  const transactions = await TransactionsCollection.find({ userId });
   return transactions;
 };
 
@@ -38,7 +38,10 @@ export const createTransactions = async (userId, payload) => {
     { $inc: { balance: balanceChange } },
   );
 
-  if (!updateResult) throw createHttpError(404, 'User balance not found!');
+  if (updateResult.matchedCount === 0)
+    throw createHttpError(404, 'User not found!');
+  if (updateResult.modifiedCount === 0)
+    throw createHttpError(400, 'Failed to update user balance!');
 
   return newTransaction;
 };
