@@ -13,6 +13,7 @@ tags:
     description: Auth operations.
 servers:
   - url: http://localhost:3000
+  - url: https://project-codesamurai-backend.onrender.com
 paths:
   /auth/register:
     post:
