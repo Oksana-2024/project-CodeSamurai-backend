@@ -5,8 +5,9 @@ import {
   logoutUser,
   findUserByEmail,
   createUser,
-  updateUserWithToken,
+  createSession,
 } from '../services/auth.js';
+import { SessionsCollection } from '../db/models/Sessions.js';
 
 export const registerUserController = async (req, res) => {
   const user = await findUserByEmail(req.body.email);
@@ -14,17 +15,17 @@ export const registerUserController = async (req, res) => {
   if (user)
     throw createHttpError(
       409,
-      'This email address is already in use. Please try another one',
+      'The user already exists. Please try another one',
     );
 
-  const newUser = await createUser(req.body);
+  const { user: newUser, token } = await createUser(req.body);
 
   res.status(201).json({
     user: {
       name: newUser.name,
       email: newUser.email,
     },
-    token: newUser.token,
+    token,
   });
 };
 
@@ -42,11 +43,13 @@ export const loginUserController = async (req, res) => {
 
   if (!isPwdEqual) throw createHttpError(401, 'Email or password is incorrect');
 
-  const updatedUser = await updateUserWithToken(user._id, user.email);
+  await SessionsCollection.deleteOne({ userId: user._id });
+
+  const token = await createSession(user._id, user.email);
 
   res.status(200).json({
-    user: { name: updatedUser.name, email: updatedUser.email },
-    token: updatedUser.token,
+    user: { name: user.name, email: user.email },
+    token,
   });
 };
 

@@ -1,9 +1,10 @@
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
 
-import { UsersCollection } from '../db/models/Users.js';
+// import { UsersCollection } from '../db/models/Users.js';
 
 import { getEnvVar } from '../utils/getEnvVar.js';
+import { SessionsCollection } from '../db/models/Sessions.js';
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -15,13 +16,19 @@ export const authenticate = async (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decodedUser = jwt.verify(token, getEnvVar('JWT_SECRET'));
-    const user = await UsersCollection.findById(decodedUser.id);
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
 
-    if (!user) {
-      return next(createHttpError(401, 'User not found'));
+    const session = await SessionsCollection.findOne({
+      userId: decoded.id,
+      token,
+    });
+
+    if (!session) {
+      return next(createHttpError(401, 'Session not found'));
     }
-    req.user = user;
+
+    req.user = { _id: decoded.id, email: decoded.email };
+
     next();
   } catch (error) {
     console.log(error);
