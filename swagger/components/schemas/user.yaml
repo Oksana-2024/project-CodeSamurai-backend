@@ -2,6 +2,7 @@ type: object
 required:
   - name
   - email
+  - password
 properties:
   _id:
     type: string
@@ -16,10 +17,6 @@ properties:
     format: email
     description: User's email
     example: johnd@gmail.com
-  token:
-    type: string
-    description: JWT token
-    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   photo:
     type: string
     description: Optional photo URL

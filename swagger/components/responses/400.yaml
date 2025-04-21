@@ -10,3 +10,11 @@ content:
         message:
           type: string
           example: BadRequestError
+        data:
+          type: object
+          required:
+            - message
+          properties:
+            message:
+              type: string
+              example: 'Validation Error'

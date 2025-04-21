@@ -5,7 +5,7 @@ operationId: registerUser
 description:
   'This endpoint allows a new user to create an account by providing a name, valid email, and password.
   The email must be unique.
-  Password must be at least 4 characters and no more than 64.
+  Password must be at least 6 characters and no more than 64.
   On successful registration, the user receives their name, email, and an authentication token.'
 security: []
 requestBody:
