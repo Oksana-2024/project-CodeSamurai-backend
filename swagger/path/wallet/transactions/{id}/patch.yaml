@@ -1,0 +1,83 @@
+tags:
+  - Wallet
+summary: Update transaction
+operationId: updateTransaction
+description: Update transaction with provided data
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '67cece57cf044b5afacf7749'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          date:
+            description: 'Date of the transaction'
+            type: string
+            format: date-time
+            example: '2025-04-01T00:00:00.000Z'
+          type:
+            description: 'Type of the transaction'
+            type: string
+            enum: ['income', 'expense']
+            example: income
+          category:
+            description: 'Category of the transaction'
+            type: string
+            enum:
+              [
+                'income',
+                'main expenses',
+                'products',
+                'car',
+                'self care',
+                'child care',
+                'household products',
+                'education',
+                'leisure',
+                'other expenses',
+                'entertainment',
+              ]
+            example: products
+          sum:
+            description: 'Sum of the transaction'
+            type: number
+            example: 15423.6
+          comment:
+            description: 'Comment of the transaction'
+            type: string
+            example: Products in the supermarket
+responses:
+  '200':
+    description: 'Successfully patched a user transactions!'
+    content:
+      application/json:
+        schema:
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully patched a user transactions!'
+            data:
+              $ref: ../../../../components/schemas/transactions.yaml
+  '400':
+    $ref: ../../../../components/responses/400.yaml
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../../components/responses/404.yaml
+  '500':
+    $ref: ../../../../components/responses/500.yaml

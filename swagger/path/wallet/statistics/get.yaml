@@ -1,0 +1,66 @@
+tags:
+  - Wallet
+summary: Get list of user's statistics transactions by period
+operationId: getTransactionsByPeriod
+description: Get list of user's statistics transactions by period
+security:
+  - bearerAuth: []
+parameters:
+  - in: query
+    name: year
+    schema:
+      type: number
+      example: 2022
+  - in: query
+    name: month
+    schema:
+      type: number
+      example: 05
+responses:
+  '200':
+    description: 'Successfully found transactions for this period!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully found transactions for this period!'
+            data:
+              type: object
+              required:
+                - totalBalance
+                - totalIncome
+                - totalExpense
+                - categoryExpenses
+                - periodType
+              properties:
+                totalBalance:
+                  type: number
+                  example: 15299.5
+                totalIncome:
+                  type: number
+                  example: 17000
+                totalExpense:
+                  type: number
+                  example: 1700.5
+                categoryExpenses:
+                  type: object
+                  example:
+                    "products": 350.5
+                    "car": 1350
+                periodType:
+                  type: string
+                  example: "past"
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

@@ -1,0 +1,67 @@
+type: object
+required:
+  - _id
+  - date
+  - type
+  - category
+  - sum
+  - userId
+properties:
+  _id:
+    description: transactions's id
+    type: string
+    example: 67cece57cf044b5afacf7749
+  userId:
+    description: Contact's user id
+    type: string
+    example: 67cd81343b84f810f27e521f
+  date:
+    description: Date of the transaction
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'
+  type:
+    description: Type of the transaction
+    type: string
+    enum: ['income', 'expense']
+    example: income
+    default: income
+  category:
+    description: Category of the transaction
+    type: string
+    enum:
+      [
+        'income',
+        'main expenses',
+        'products',
+        'car',
+        'self care',
+        'child care',
+        'household products',
+        'education',
+        'leisure',
+        'other expenses',
+        'entertainment',
+      ]
+    example: products
+    default: products
+  sum:
+    description: Sum of the transaction
+    type: number
+    example: 15423.6
+    default: 0
+  comment:
+    description: Comment of the transaction
+    type: string
+    example: Products in the supermarket
+    default: ' '
+  createdAt:
+    description: Transaction's creation date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'
+  updatedAt:
+    description: Transaction's last update date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'

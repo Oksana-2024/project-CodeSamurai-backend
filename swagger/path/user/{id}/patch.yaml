@@ -1,0 +1,56 @@
+tags:
+  - User
+summary: Update user profile
+operationId: updateUserProfile
+description: Update user profile with provided data
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '67cece57cf044b5afacf7749'
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            description: 'User`s name'
+            type: string
+            example: 'John Doe'
+          photo:
+            description: 'Link to user`s photo'
+            format: binary
+            type: string
+            example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
+responses:
+  '200':
+    description: 'Successfully patched a user profile!'
+    content:
+      application/json:
+        schema:
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully patched a user profile!'
+            data:
+              $ref: ../../../components/schemas/user.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../components/responses/404.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

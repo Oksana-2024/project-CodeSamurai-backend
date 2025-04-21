@@ -1,0 +1,91 @@
+tags:
+  - Wallet
+summary: Create transactions
+operationId: createTransactions
+description: 'Create a transaction with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - _id
+          - date
+          - type
+          - category
+          - sum
+          - userId
+        properties:
+          _id:
+            description: transactions's id
+            type: string
+            example: 67cece57cf044b5afacf7749
+          userId:
+            description: Contact's user id
+            type: string
+            example: 67cd81343b84f810f27e521f
+          date:
+            description: Date of the transaction
+            type: string
+            format: date-time
+            example: '2025-04-01T00:00:00.000Z'
+          type:
+            description: Type of the transaction
+            type: string
+            enum: ['income', 'expense']
+            example: income
+          category:
+            description: Category of the transaction
+            type: string
+            enum:
+              [
+                'income',
+                'main expenses',
+                'products',
+                'car',
+                'self care',
+                'child care',
+                'household products',
+                'education',
+                'leisure',
+                'other expenses',
+                'entertainment',
+              ]
+            example: products
+          sum:
+            description: Sum of the transaction
+            type: number
+            example: 15423.6
+          comment:
+            description: Comment of the transaction
+            type: string
+            example: Products in the supermarket
+
+responses:
+  '201':
+    description: Successfully created transactions!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully created transactions!
+            data:
+              $ref: ../../../components/schemas/transactions.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

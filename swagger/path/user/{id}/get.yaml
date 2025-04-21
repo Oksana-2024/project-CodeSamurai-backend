@@ -1,0 +1,41 @@
+tags:
+  - User
+summary: Get user profile by id
+operationId: getUserProfileById
+description: 'Get user profile by id'
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '67cece57cf044b5afacf7749'
+responses:
+  '200':
+    description: 'Successfully fetched a user profile!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully fetched a user profile!
+            data:
+              type: object
+              $ref: '../../../components/schemas/user.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'
