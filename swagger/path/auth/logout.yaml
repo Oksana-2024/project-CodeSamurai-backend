@@ -1,0 +1,16 @@
+tags:
+  - Auth
+summary: Log out user
+operationId: logoutUser
+description: 'Ends user session by invalidating the access token. Requires valid Bearer token in the `Authorization` header.'
+security:
+  - bearerAuth: []
+responses:
+  '204':
+    description: No Content
+  '401':
+    $ref: ../../components/responses/401.yaml
+  '404':
+    $ref: ../../components/responses/404.yaml
+  '500':
+    $ref: ../../components/responses/500.yaml
