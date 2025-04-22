@@ -19,11 +19,11 @@ import {
   updateTransactionsSchema,
 } from '../validation/wallet.js';
 
-// import { authenticate } from '../middlewares/authenticate.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const walletRouter = Router();
 
-// walletRouter.use(authenticate);
+walletRouter.use(authenticate);
 
 walletRouter.get('/transactions', ctrlWrapper(getTransactionsController));
 

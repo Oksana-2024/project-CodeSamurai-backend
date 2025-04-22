@@ -10,12 +10,12 @@ import {
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidID.js';
-// import { authenticate } from '../middlewares/authenticate.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
 
 const userRouter = Router();
 
-// userRouter.use(authenticate);
+userRouter.use(authenticate);
 
 userRouter.get('/:id', isValidId, ctrlWrapper(userProfileController));
 
