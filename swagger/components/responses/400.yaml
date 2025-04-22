@@ -1,8 +1,12 @@
-description: Bad Request
+description: Bad Request error
 content:
   application/json:
     schema:
       type: object
+      required:
+        - status
+        - message
+        - data
       properties:
         status:
           type: integer
@@ -17,4 +21,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Validation Error'
+              example: Invalid request data

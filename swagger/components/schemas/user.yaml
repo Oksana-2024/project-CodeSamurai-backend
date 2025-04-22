@@ -5,19 +5,38 @@ required:
   - password
 properties:
   _id:
+    description: User's id
     type: string
-    description: User's ID
-    example: 65e4decdd286b30065d54af9
+    example: 67cd81343b84f810f27e521f
   name:
-    type: string
     description: User's name
-    example: John Doe
+    type: string
+    example: 'John Doe'
   email:
-    type: string
-    format: email
     description: User's email
-    example: johnd@gmail.com
-  photo:
     type: string
-    description: Optional photo URL
-    example: https://example.com/photo.jpg
+    example: 'example@mail.com'
+  password:
+    description: User's password
+    type: string
+    example: 'pCVVJHbCsY57'
+  balance:
+    description: User's balance
+    type: number
+    example: 0
+    default: 0
+  photo:
+    description: 'Link to user`s photo'
+    format: binary
+    type: string
+    example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
+  createdAt:
+    description: User's creation date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'
+  updatedAt:
+    description: User's last update date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'

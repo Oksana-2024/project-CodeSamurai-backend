@@ -1,6 +1,6 @@
-description: Not found error
+description: Not Found Error
 content:
-  application/json:
+  application\json:
     schema:
       type: object
       required:
@@ -21,4 +21,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Not Found'
+              example: Not Found

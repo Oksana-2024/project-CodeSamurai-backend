@@ -1,12 +1,16 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Money Guard
+  title: Money Guard app
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Web server and API documentation for Money Guard App
+  description: This is a documentation of Money Guard App
 tags:
+  - name: Wallet
+    description: Wallet operations.
+  - name: User
+    description: User operations.
   - name: Transactions
     description: Transactions operations.
   - name: Auth
@@ -15,6 +19,27 @@ servers:
   - url: http://localhost:3000
   - url: https://project-codesamurai-backend.onrender.com
 paths:
+  /wallet/balance:
+    get:
+      $ref: ../swagger/path/wallet/balance/get.yaml
+  /wallet/statistics:
+    get:
+      $ref: ../swagger/path/wallet/statistics/get.yaml
+  /wallet/transactions:
+    get:
+      $ref: ../swagger/path/wallet/transactions/get.yaml
+    post:
+      $ref: ../swagger/path/wallet/transactions/post.yaml
+  /wallet/transactions/{id}:
+    patch:
+      $ref: ../swagger/path/wallet/transactions/{id}/patch.yaml
+    delete:
+      $ref: ../swagger/path/wallet/transactions/{id}/delete.yaml
+  /user/{id}:
+    get:
+      $ref: ../swagger/path/user/{id}/get.yaml
+    patch:
+      $ref: ../swagger/path/user/{id}/patch.yaml
   /auth/register:
     post:
       $ref: '../swagger/path/auth/register.yaml'

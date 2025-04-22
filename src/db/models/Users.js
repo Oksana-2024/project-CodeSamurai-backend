@@ -15,8 +15,9 @@ const usersSchema = new Schema(
       type: String,
       required: true,
     },
-    token: {
-      type: String,
+    balance: {
+      type: Number,
+      default: 0,
     },
     photo: { type: String },
   },
