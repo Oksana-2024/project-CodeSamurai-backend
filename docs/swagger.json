@@ -584,28 +584,17 @@
         }
       }
     },
-    "/user/{id}": {
+    "/user": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Get user profile by id",
-        "operationId": "getUserProfileById",
-        "description": "Get user profile by id",
+        "summary": "Get user profile",
+        "operationId": "getUserProfile",
+        "description": "Get user profile",
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "67cece57cf044b5afacf7749"
-            }
           }
         ],
         "responses": {
@@ -639,7 +628,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"
@@ -648,7 +637,9 @@
             "$ref": "#/components/responses/500"
           }
         }
-      },
+      }
+    },
+    "/user/{id}": {
       "patch": {
         "tags": [
           "User"

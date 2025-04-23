@@ -35,9 +35,10 @@ paths:
       $ref: ../swagger/path/wallet/transactions/{id}/patch.yaml
     delete:
       $ref: ../swagger/path/wallet/transactions/{id}/delete.yaml
-  /user/{id}:
+  /user:
     get:
-      $ref: ../swagger/path/user/{id}/get.yaml
+      $ref: ../swagger/path/user/get.yaml
+  /user/{id}:
     patch:
       $ref: ../swagger/path/user/{id}/patch.yaml
   /auth/register:

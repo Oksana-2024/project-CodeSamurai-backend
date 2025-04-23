@@ -7,9 +7,17 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const userProfileController = async (req, res) => {
-  const { id } = req.params;
+  const { _id: userId } = req.user;
 
-  const profile = await userProfile(id);
+  if (!userId)
+    throw createHttpError(
+      401,
+      'User not authenticated or user ID not available!',
+    );
+
+  const profile = await userProfile(userId);
+
+  if (!profile) throw createHttpError(404, 'User profile not found!');
 
   res.status(200).json({
     status: 200,
@@ -32,12 +40,16 @@ export const updateUserProfileController = async (req, res) => {
     }
   }
 
-  const updatedProfile = await updateUserProfile(id, {
+  const updatePayload = {
     ...req.body,
-    photo: photoUrl,
-  });
+    ...(photoUrl && { photo: photoUrl }),
+  };
+
+  const updatedProfile = await updateUserProfile(id, updatePayload);
 
   if (!updatedProfile) throw createHttpError(404, 'User profile not found!');
+
+  console.log('Updated profile balance:', updatedProfile.balance);
 
   res.status(200).json({
     status: 200,
