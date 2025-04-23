@@ -49,8 +49,6 @@ export const updateUserProfileController = async (req, res) => {
 
   if (!updatedProfile) throw createHttpError(404, 'User profile not found!');
 
-  console.log('Updated profile balance:', updatedProfile.balance);
-
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a user profile!',
