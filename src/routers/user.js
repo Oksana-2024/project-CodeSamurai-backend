@@ -17,7 +17,7 @@ const userRouter = Router();
 
 userRouter.use(authenticate);
 
-userRouter.get('/:id', isValidId, ctrlWrapper(userProfileController));
+userRouter.get('/', ctrlWrapper(userProfileController));
 
 userRouter.patch(
   '/:id',
