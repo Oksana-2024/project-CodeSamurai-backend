@@ -16,13 +16,11 @@ export const getTransactionsController = async (req, res) => {
   const { _id: userId } = req.user;
 
   const { page, perPage } = parsePaginationParams(req.query);
-  const { sortOrder, sortBy } = parseSortParams(req.query);
+  const { sortOrder } = parseSortParams(req.query);
 
-  const transactions = await getTransactions({
-    userId,
+  const transactions = await getTransactions(userId, {
     page,
     perPage,
-    sortBy,
     sortOrder,
   });
 

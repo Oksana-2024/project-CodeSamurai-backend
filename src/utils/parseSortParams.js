@@ -4,7 +4,7 @@ export const parseSortParams = (query) => {
     : 'desc';
 
   return {
-    sortBy: 'createdAt',
+    sortBy: 'data',
     sortOrder,
   };
 };

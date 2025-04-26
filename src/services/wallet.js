@@ -2,10 +2,28 @@ import createHttpError from 'http-errors';
 
 import { TransactionsCollection } from '../db/models/Transactions.js';
 import { UsersCollection } from '../db/models/Users.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getTransactions = async (userId) => {
-  const transactions = await TransactionsCollection.find({ userId });
-  return transactions;
+export const getTransactions = async (
+  userId,
+  { page = 1, perPage = 8, sortOrder = 'desc' } = {},
+) => {
+  const skip = (page - 1) * perPage;
+
+  const [transactions, totalCount] = await Promise.all([
+    TransactionsCollection.find({ userId })
+      .sort({ date: sortOrder === 'asc' ? 1 : -1 })
+      .skip(skip)
+      .limit(perPage),
+    TransactionsCollection.countDocuments({ userId }),
+  ]);
+
+  const pageInfo = calculatePaginationData(page, perPage, totalCount);
+
+  return {
+    transactions,
+    pageInfo,
+  };
 };
 
 export const getBalance = async (userId) => {
