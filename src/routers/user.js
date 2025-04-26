@@ -13,13 +13,13 @@ import { isValidId } from '../middlewares/isValidID.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
 
-const currentsRouter = Router();
+const currentUsersRouter = Router();
 
-currentsRouter.use(authenticate);
+currentUsersRouter.use(authenticate);
 
-currentsRouter.get('/', ctrlWrapper(userProfileController));
+currentUsersRouter.get('/', ctrlWrapper(userProfileController));
 
-currentsRouter.patch(
+currentUsersRouter.patch(
   '/:id',
   isValidId,
   upload.single('photo'),
@@ -27,4 +27,4 @@ currentsRouter.patch(
   ctrlWrapper(updateUserProfileController),
 );
 
-export default currentsRouter;
+export default currentUsersRouter;
