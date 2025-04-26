@@ -37,10 +37,24 @@ responses:
           properties:
             user:
               type: object
-              $ref: '../../components/schemas/user.yaml'
+              properties:
+                name:
+                  type: string
+                  example: 'John Doe'
+                email:
+                  type: string
+                  format: email
+                  example: 'johnd@gmail.com'
+                balance:
+                  type: number
+                  example: 0
+                photo:
+                  type: string
+                  format: uri
+                  example: 'https://example.com/photo.jpg'
             token:
               type: string
-              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   '400':
     $ref: '../../components/responses/400.yaml'
   '401':

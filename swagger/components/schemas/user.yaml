@@ -50,15 +50,3 @@ properties:
     type: string
     format: uri
     example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
-  createdAt:
-    description: |
-      Timestamp indicating when the user account was created. Set automatically by the system.
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'
-  updatedAt:
-    description: |
-      Timestamp indicating when the user's information was last modified. Automatically updated on changes.
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'
