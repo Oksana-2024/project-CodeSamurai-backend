@@ -9,10 +9,20 @@ import {
   getTransactionsByPeriod,
 } from '../services/wallet.js';
 
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+
 export const getTransactionsController = async (req, res) => {
   const { _id: userId } = req.user;
 
-  const transactions = await getTransactions(userId);
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortOrder } = parseSortParams(req.query);
+
+  const transactions = await getTransactions(userId, {
+    page,
+    perPage,
+    sortOrder,
+  });
 
   res.status(200).json({
     status: 200,
