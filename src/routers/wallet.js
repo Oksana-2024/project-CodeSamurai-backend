@@ -21,33 +21,33 @@ import {
 
 import { authenticate } from '../middlewares/authenticate.js';
 
-const walletRouter = Router();
+const transactionsRouter = Router();
 
-walletRouter.use(authenticate);
+transactionsRouter.use(authenticate);
 
-walletRouter.get('/transactions', ctrlWrapper(getTransactionsController));
+transactionsRouter.get('/', ctrlWrapper(getTransactionsController));
 
-walletRouter.post(
-  '/transactions',
+transactionsRouter.post(
+  '/',
   validateBody(createTransactionsSchema),
   ctrlWrapper(createTransactionsController),
 );
 
-walletRouter.patch(
-  '/transactions/:id',
+transactionsRouter.patch(
+  '/:id',
   isValidId,
   validateBody(updateTransactionsSchema),
   ctrlWrapper(updateTransactionsController),
 );
 
-walletRouter.delete(
-  '/transactions/:id',
+transactionsRouter.delete(
+  '/:id',
   isValidId,
   ctrlWrapper(deleteTransactionsController),
 );
 
-walletRouter.get('/balance', ctrlWrapper(getBalanceController));
+transactionsRouter.get('/balance', ctrlWrapper(getBalanceController));
 
-walletRouter.get('/statistics', ctrlWrapper(getTransactionsByPeriodController));
+transactionsRouter.get('/statistics', ctrlWrapper(getTransactionsByPeriodController));
 
-export default walletRouter;
+export default transactionsRouter;

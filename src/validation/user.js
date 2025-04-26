@@ -22,5 +22,5 @@ export const updateUserProfileSchema = Joi.object({
   .min(1)
   .messages({
     'object.min':
-      'The transaction update request body cannot be empty. It must contain at least one field to update',
+      'The profile update request body cannot be empty. It must contain at least one field to update',
   });

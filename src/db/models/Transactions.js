@@ -1,49 +1,40 @@
 import { model, Schema } from 'mongoose';
+import { TRANSACTION_TYPES } from '../../constans/index.js';
 
 const transactionsSchema = new Schema(
   {
     date: {
       type: Date,
       required: true,
+      index: true,
     },
     type: {
       type: String,
-      enum: ['income', 'expense'],
+      enum: Object.values(TRANSACTION_TYPES),
       required: true,
-      default: 'income',
+      default: TRANSACTION_TYPES.INCOME,
+      index: true,
     },
-    category: {
-      type: String,
-      enum: [
-        'income',
-        'main expenses',
-        'products',
-        'car',
-        'self care',
-        'child care',
-        'household products',
-        'education',
-        'leisure',
-        'other expenses',
-        'entertainment',
-      ],
+    categoryId: {
+      type: Schema.Types.ObjectId,
       required: true,
-      default: 'Products',
+      ref: 'category',
+      index: true,
     },
     comment: {
       type: String,
-      default: ' ',
+      default: '',
     },
     sum: {
       type: Number,
       required: true,
       default: 0,
     },
-
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'user',
+      index: true,
     },
   },
   {
@@ -51,5 +42,8 @@ const transactionsSchema = new Schema(
     versionKey: false,
   },
 );
+
+// Створюємо складений індекс для ефективного пошуку транзакцій за користувачем та періодом
+transactionsSchema.index({ userId: 1, date: 1 });
 
 export const TransactionsCollection = model('transaction', transactionsSchema);
