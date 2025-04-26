@@ -3,8 +3,12 @@ export const parseSortParams = (query) => {
     ? query.sortOrder.toLowerCase()
     : 'desc';
 
+  const sortBy = ['date'].includes(query.sortBy?.toLowerCase())
+    ? query.sortBy.toLowerCase()
+    : 'date';
+
   return {
-    sortBy: 'data',
+    sortBy,
     sortOrder,
   };
 };
