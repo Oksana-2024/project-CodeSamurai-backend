@@ -19,7 +19,7 @@ const usersSchema = new Schema(
       type: Number,
       default: 0,
     },
-    photo: { type: String },
+    photo: { type: String, default: null },
   },
   {
     timestamps: true,

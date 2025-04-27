@@ -7,14 +7,29 @@ import { CategoriesCollection } from '../db/models/Categories.js';
 import { updateUserBalance } from '../utils/balanceUtil.js';
 
 import { MINIMUM_YEAR } from '../constans/index.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getTransactions = async (userId) => {
-  const transactions = await TransactionsCollection.find({ userId }).populate(
-    'categoryId',
-    'name',
-  );
+export const getTransactions = async (
+  userId,
+  { page = 1, perPage = 8, sortOrder = 'desc' } = {},
+) => {
+  const skip = (page - 1) * perPage;
 
-  return transactions;
+  const [transactions, totalCount] = await Promise.all([
+    TransactionsCollection.find({ userId })
+      .sort({ date: sortOrder === 'asc' ? 1 : -1 })
+      .skip(skip)
+      .limit(perPage)
+      .populate('categoryId', 'name'),
+    TransactionsCollection.countDocuments({ userId }),
+  ]);
+
+  const pageInfo = calculatePaginationData(page, perPage, totalCount);
+
+  return {
+    transactions,
+    pageInfo,
+  };
 };
 
 export const getBalance = async (userId) => {

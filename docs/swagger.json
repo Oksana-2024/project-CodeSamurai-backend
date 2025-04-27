@@ -19,20 +19,16 @@
   ],
   "tags": [
     {
-      "name": "Wallet",
-      "description": "Wallet operations."
+      "name": "Auth",
+      "description": "Auth operations."
     },
     {
       "name": "User",
       "description": "User operations."
     },
     {
-      "name": "Transactions",
-      "description": "Transactions operations."
-    },
-    {
-      "name": "Auth",
-      "description": "Auth operations."
+      "name": "Wallet",
+      "description": "Wallet operations."
     }
   ],
   "paths": {
@@ -780,7 +776,26 @@
                   "properties": {
                     "user": {
                       "type": "object",
-                      "$ref": "#/components/schemas/user"
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "johnd@gmail.com"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://example.com/photo.jpg"
+                        }
+                      }
                     },
                     "token": {
                       "type": "string",
@@ -851,7 +866,26 @@
                   "properties": {
                     "user": {
                       "type": "object",
-                      "$ref": "#/components/schemas/user"
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "johnd@gmail.com"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://example.com/photo.jpg"
+                        }
+                      }
                     },
                     "token": {
                       "type": "string",
@@ -918,54 +952,49 @@
       "user": {
         "type": "object",
         "required": [
+          "_id",
           "name",
           "email",
           "password"
         ],
         "properties": {
           "_id": {
-            "description": "User's id",
+            "description": "A unique ID for the user in the database. Automatically generated when the user is created.\n",
             "type": "string",
             "example": "67cd81343b84f810f27e521f"
           },
           "name": {
-            "description": "User's name",
+            "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
             "type": "string",
+            "minLength": 3,
+            "maxLength": 20,
             "example": "John Doe"
           },
           "email": {
-            "description": "User's email",
+            "description": "The user's email address, used as a unique login credential. Must be a valid email format and no more than 64 characters long. This field is required for both registration and login.\n",
             "type": "string",
+            "format": "email",
+            "maxLength": 64,
             "example": "example@mail.com"
           },
           "password": {
-            "description": "User's password",
+            "description": "The user's password. Must be between 6 and 20 characters. It must include at least:\n- one uppercase letter,\n- one lowercase letter,\n- one number,\n- one special character (!@#$%^&* etc).\nShould not contain whitespace. Required for account creation.\n",
             "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
             "example": "pCVVJHbCsY57"
           },
           "balance": {
-            "description": "User's balance",
+            "description": "The user's current financial balance represented as a number. This field is optional and defaults to 0.\nThe balance can be updated through transactions, displayed on the user's dashboard or profile page to show their current available balance in real-time.\n",
             "type": "number",
-            "example": 0,
-            "default": 0
+            "default": 0,
+            "example": 0
           },
           "photo": {
-            "description": "Link to user`s photo",
-            "format": "binary",
+            "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL\nand can be used to personalize the user's profile page.\n",
             "type": "string",
+            "format": "uri",
             "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
-          },
-          "createdAt": {
-            "description": "User's creation date",
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-04-01T00:00:00.000Z"
-          },
-          "updatedAt": {
-            "description": "User's last update date",
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-04-01T00:00:00.000Z"
           }
         }
       },
