@@ -24,10 +24,15 @@ export const getTransactionsController = async (req, res) => {
     sortOrder,
   });
 
+  const balance = await getBalance(userId);
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found transactions!',
-    data: transactions,
+    data: {
+      transactions,
+      balance,
+    },
   });
 };
 
@@ -35,12 +40,17 @@ export const createTransactionsController = async (req, res) => {
   const { _id: userId } = req.user;
   const payload = req.body;
 
-  const transactions = await createTransactions(userId, payload);
+  const transaction = await createTransactions(userId, payload);
+
+  const balance = await getBalance(userId);
 
   res.status(201).json({
     status: 201,
     message: 'Successfully created transactions!',
-    data: transactions,
+    data: {
+      transaction,
+      balance,
+    },
   });
 };
 
@@ -48,39 +58,55 @@ export const deleteTransactionsController = async (req, res) => {
   const { id } = req.params;
   const { _id: userId } = req.user;
 
-  const transactions = await deleteTransactions(id, userId);
+  const deletedTransaction = await deleteTransactions(id, userId);
 
-  if (!transactions) throw createHttpError(404, 'User transactions not found!');
+  if (!deletedTransaction) {
+    throw createHttpError(404, 'Transaction not found!');
+  }
 
-  res.status(204).send();
+  const balance = await getBalance(userId);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully deleted transaction!',
+    data: {
+      balance,
+    },
+  });
 };
 
 export const updateTransactionsController = async (req, res) => {
   const { id } = req.params;
   const { _id: userId } = req.user;
+  const payload = req.body;
 
-  const transactions = await updateTransactions(id, { ...req.body }, userId);
+  const transaction = await updateTransactions(id, payload, userId);
 
-  if (!transactions) throw createHttpError(404, 'User transactions not found!');
+  if (!transaction) {
+    throw createHttpError(404, 'Transaction not found!');
+  }
+
+  const balance = await getBalance(userId);
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully patched a user transactions!',
-    data: transactions,
+    message: 'Successfully patched a user transaction!',
+    data: {
+      transaction,
+      balance,
+    },
   });
 };
 
 export const getBalanceController = async (req, res) => {
   const { _id: userId } = req.user;
 
-  const user = await getBalance(userId);
-
-  if (!user) throw createHttpError(404, 'User not found!');
+  const balance = await getBalance(userId);
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully found a user balance!',
-    data: user,
+    message: 'Successfully found user balance!',
+    data: { balance },
   });
 };
 
@@ -101,19 +127,32 @@ export const getTransactionsByPeriodController = async (req, res) => {
       'Invalid month value. Should be between 1 and 12',
     );
   }
-
-  if (isNaN(yearNum) || yearNum < 2020 || yearNum > 2030) {
+  if (isNaN(yearNum)) {
     throw createHttpError(400, 'Invalid year value');
   }
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  if (yearNum < 2022) {
+    throw createHttpError(400, `Year must be 2022 or later.`);
+  }
+  if (
+    yearNum > currentYear ||
+    (yearNum === currentYear && monthNum > currentMonth)
+  ) {
+    throw createHttpError(400, 'Period cannot be in the future.');
+  }
+
+  const result = await getTransactionsByPeriod(userId, yearNum, monthNum);
 
   const formattedMonth = monthNum.toString().padStart(2, '0');
   const period = `${yearNum}-${formattedMonth}`;
 
-  const result = await getTransactionsByPeriod(userId, period);
-
   res.status(200).json({
     status: 200,
-    message: 'Successfully found transactions for this period!',
+    message: `Successfully found transactions for period ${period}!`,
     data: result,
   });
 };

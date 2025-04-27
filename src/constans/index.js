@@ -11,3 +11,18 @@ export const CLOUDINARY = {
 
 export const SWAGGER_PATH = path.join(process.cwd(), 'docs', 'swagger.json');
 export const TOKEN_VALID_UNTIL = 24 * 60 * 60 * 1000;
+
+export const DEFAULT_CATEGORIES = [
+  'Main expenses',
+  'Products',
+  'Car',
+  'Self care',
+  'Child care',
+  'Household products',
+  'Education',
+  'Leisure',
+  'Other expenses',
+  'Entertainment',
+];
+
+export const MINIMUM_YEAR = 2022;

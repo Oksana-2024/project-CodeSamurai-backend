@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import userRouter from './routers/user.js';
-import walletRouter from './routers/wallet.js';
+import currentUsersRouter from './routers/user.js';
+import transactionsRouter from './routers/wallet.js';
+import categoriesRouter from './routers/categories.js';
 
 import { UPLOAD_DIR } from './constans/index.js';
 
@@ -22,8 +23,9 @@ export const startServer = () => {
   app.use(cors());
   app.use(cookieParser());
 
-  app.use('/wallet', walletRouter);
-  app.use('/user', userRouter);
+  app.use('/transactions', transactionsRouter);
+  app.use('/categories', categoriesRouter);
+  app.use('/currentUsers', currentUsersRouter);
   app.use('/uploads', express.static(UPLOAD_DIR));
   app.use('/api-docs', swaggerDocs());
   app.use('/auth', authRouter);

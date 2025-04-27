@@ -2,6 +2,11 @@ import createHttpError from 'http-errors';
 
 import { TransactionsCollection } from '../db/models/Transactions.js';
 import { UsersCollection } from '../db/models/Users.js';
+import { CategoriesCollection } from '../db/models/Categories.js';
+
+import { updateUserBalance } from '../utils/balanceUtil.js';
+
+import { MINIMUM_YEAR } from '../constans/index.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getTransactions = async (
@@ -14,7 +19,8 @@ export const getTransactions = async (
     TransactionsCollection.find({ userId })
       .sort({ date: sortOrder === 'asc' ? 1 : -1 })
       .skip(skip)
-      .limit(perPage),
+      .limit(perPage)
+      .populate('categoryId', 'name'),
     TransactionsCollection.countDocuments({ userId }),
   ]);
 
@@ -28,67 +34,56 @@ export const getTransactions = async (
 
 export const getBalance = async (userId) => {
   const user = await UsersCollection.findById(userId).select('balance');
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
   return user.balance;
 };
 
 export const createTransactions = async (userId, payload) => {
+  const user = await UsersCollection.findById(userId);
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const category = await CategoriesCollection.findById(payload.categoryId);
+
+  if (!category) {
+    throw createHttpError(404, 'Category not found!');
+  }
+
   const transactionData = {
     userId,
     ...payload,
   };
 
   const newTransaction = await TransactionsCollection.create(transactionData);
-  const transactionSum = newTransaction.sum;
-  const transactionType = newTransaction.type;
 
-  const user = await UsersCollection.findById(userId);
+  await updateUserBalance(userId);
 
-  if (!user) throw createHttpError(404, 'User not found!');
+  const createdAndPopulatedTransaction = await TransactionsCollection.findById(
+    newTransaction._id,
+  ).populate('categoryId', 'name');
 
-  let balanceChange = transactionSum;
-
-  if (transactionType === 'expense') {
-    balanceChange = -balanceChange;
-  }
-
-  const updateResult = await UsersCollection.updateOne(
-    { _id: userId },
-    { $inc: { balance: balanceChange } },
-  );
-
-  if (updateResult.matchedCount === 0)
-    throw createHttpError(404, 'User not found!');
-  if (updateResult.modifiedCount === 0)
-    throw createHttpError(400, 'Failed to update user balance!');
-
-  return newTransaction;
+  return createdAndPopulatedTransaction;
 };
 
 export const deleteTransactions = async (id, userId) => {
-  const transaction = await TransactionsCollection.findOneAndDelete({
+  const deletedTransaction = await TransactionsCollection.findOneAndDelete({
     _id: id,
     userId,
-  });
+  }).populate('categoryId', 'name');
 
-  if (!transaction) {
+  if (!deletedTransaction) {
     return null;
   }
 
-  const transactionAmount = transaction.sum;
+  await updateUserBalance(userId);
 
-  const updatedUser = await UsersCollection.findOneAndUpdate(
-    { _id: userId },
-    { $inc: { balance: -transactionAmount } },
-    { new: true },
-  );
-
-  if (!updatedUser) throw createHttpError(404, 'User not found!');
-
-  return transaction;
+  return deletedTransaction;
 };
 
 export const updateTransactions = async (id, payload, userId) => {
-  // Спочатку отримаємо поточну транзакцію, щоб знати її початкові значення
   const oldTransaction = await TransactionsCollection.findOne({
     _id: id,
     userId,
@@ -98,138 +93,124 @@ export const updateTransactions = async (id, payload, userId) => {
     return null;
   }
 
-  // Оновлюємо транзакцію
+  if (payload.categoryId) {
+    const category = await CategoriesCollection.findById(payload.categoryId);
+
+    if (!category) {
+      throw createHttpError(404, 'Category not found!');
+    }
+  }
+
   const updatedTransaction = await TransactionsCollection.findOneAndUpdate(
     { _id: id, userId },
     payload,
     { new: true },
-  );
+  ).populate('categoryId', 'name');
 
-  // Якщо сума або тип транзакції змінились, потрібно оновити баланс
-  if (payload.sum !== undefined || payload.type !== undefined) {
-    let balanceAdjustment = 0;
-
-    // Спочатку скасуємо вплив старої транзакції на баланс
-    if (oldTransaction.type === 'income') {
-      balanceAdjustment -= oldTransaction.sum;
-    } else if (oldTransaction.type === 'expense') {
-      balanceAdjustment += oldTransaction.sum;
-    }
-
-    // Потім додаємо вплив нової (оновленої) транзакції
-    const transactionType = payload.type || oldTransaction.type;
-    const transactionSum =
-      payload.sum !== undefined ? payload.sum : oldTransaction.sum;
-
-    if (transactionType === 'income') {
-      balanceAdjustment += transactionSum;
-    } else if (transactionType === 'expense') {
-      balanceAdjustment -= transactionSum;
-    }
-
-    // Оновлюємо баланс користувача
-    if (balanceAdjustment !== 0) {
-      await UsersCollection.findByIdAndUpdate(
-        userId,
-        { $inc: { balance: balanceAdjustment } },
-        { new: true },
-      );
-    }
+  if (!updatedTransaction) {
+    return null;
   }
+
+  await updateUserBalance(userId);
 
   return updatedTransaction;
 };
 
-export const getTransactionsByPeriod = async (userId, period) => {
-  // Розбиваємо період на рік і місяць
-  const [year, month] = period.split('-').map(Number);
+export const getTransactionsByPeriod = async (userId, year, month) => {
+  if (year < MINIMUM_YEAR) {
+    throw createHttpError(
+      400,
+      `Data available only from ${MINIMUM_YEAR}. Requested year is ${year}.`,
+    );
+  }
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
 
-  // Визначаємо перший і останній день місяця
+  if (year > currentYear || (year === currentYear && month > currentMonth)) {
+    throw createHttpError(400, 'Period cannot be in the future.');
+  }
+
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
-  // Отримуємо всі транзакції користувача за вказаний період
+  const expenseCategoriesDocs = await CategoriesCollection.find({})
+    .select('_id name')
+    .lean();
+
+  const categoryAmounts = {};
+  expenseCategoriesDocs.forEach((cat) => {
+    categoryAmounts[cat.name] = 0;
+  });
+
   const transactions = await TransactionsCollection.find({
     userId,
     date: { $gte: startDate, $lte: endDate },
-  }).lean();
+  })
 
-  // Підготовка результату
+    .populate('categoryId', 'name')
+    .lean();
+
+  const user = await UsersCollection.findById(userId).select('balance').lean();
+  const currentBalance = user ? user.balance : 0;
+
   const result = {
-    totalBalance: 0,
-    totalIncome: 0,
-    totalExpense: 0,
-    categoryExpenses: {},
-    periodType: determinePeriodType(year, month),
+    totalBalance: currentBalance, // Поточний загальний баланс
+    periodIncomeOutcome: 0, // Різниця між доходами та витратами за період
+    totalIncome: 0, // Загальна сума доходів за період
+    totalExpense: 0, // Загальна сума витрат за період
+    categoryExpenses: {}, // Витрати по категоріях за період
+    periodTransactions: 0, // Загальна сума всіх транзакцій (доходи + витрати) за період
   };
 
-  // Створюємо об'єкт для зберігання витрат по кожній категорії
-  const categoryAmounts = {};
-  const expenseCategories = [
-    'main expenses',
-    'products',
-    'car',
-    'self care',
-    'child care',
-    'household products',
-    'education',
-    'leisure',
-    'other expenses',
-    'entertainment',
-  ];
+  let periodTotalAmount = 0;
 
-  // Ініціалізуємо категорії з нульовими значеннями
-  expenseCategories.forEach((category) => {
-    categoryAmounts[category] = 0;
-  });
-
-  // Аналізуємо та агрегуємо дані транзакцій
   transactions.forEach((transaction) => {
-    const { type, category, sum } = transaction;
+    const { type, categoryId, sum } = transaction;
+
+    periodTotalAmount += sum;
 
     if (type === 'income') {
       result.totalIncome += sum;
     } else if (type === 'expense') {
       result.totalExpense += sum;
 
-      // Додаємо суму до відповідної категорії витрат
-      if (category in categoryAmounts) {
-        categoryAmounts[category] += sum;
+      if (categoryId && categoryId.name) {
+        const categoryName = categoryId.name;
+
+        if (
+          Object.prototype.hasOwnProperty.call(categoryAmounts, categoryName)
+        ) {
+          categoryAmounts[categoryName] += sum;
+        }
       }
     }
   });
 
-  // Обчислюємо загальний баланс
-  result.totalBalance = result.totalIncome - result.totalExpense;
+  result.periodIncomeOutcome = result.totalIncome - result.totalExpense;
 
-  // Формуємо відформатовані дані про витрати за категоріями
+  result.periodTransactions = periodTotalAmount;
+
   result.categoryExpenses = {};
-  for (const category in categoryAmounts) {
-    if (categoryAmounts[category] > 0) {
-      result.categoryExpenses[category] = parseFloat(
-        categoryAmounts[category].toFixed(2),
+
+  for (const categoryName in categoryAmounts) {
+    if (
+      Object.prototype.hasOwnProperty.call(categoryAmounts, categoryName) &&
+      categoryAmounts[categoryName] > 0
+    ) {
+      result.categoryExpenses[categoryName] = parseFloat(
+        categoryAmounts[categoryName].toFixed(2),
       );
     }
   }
 
-  // Заокруглюємо всі суми до двох знаків після коми для зручності
   result.totalBalance = parseFloat(result.totalBalance.toFixed(2));
+  result.periodIncomeOutcome = parseFloat(
+    result.periodIncomeOutcome.toFixed(2),
+  );
+  result.periodTransactions = parseFloat(result.periodTransactions.toFixed(2));
   result.totalIncome = parseFloat(result.totalIncome.toFixed(2));
   result.totalExpense = parseFloat(result.totalExpense.toFixed(2));
 
   return result;
-};
-
-const determinePeriodType = (year, month) => {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
-
-  if (year < currentYear || (year === currentYear && month < currentMonth)) {
-    return 'past';
-  } else if (year === currentYear && month === currentMonth) {
-    return 'current';
-  } else {
-    return 'future';
-  }
 };

@@ -5,6 +5,7 @@ const transactionsSchema = new Schema(
     date: {
       type: Date,
       required: true,
+      index: true,
     },
     type: {
       type: String,
@@ -12,34 +13,20 @@ const transactionsSchema = new Schema(
       required: true,
       default: 'income',
     },
-    category: {
-      type: String,
-      enum: [
-        'income',
-        'main expenses',
-        'products',
-        'car',
-        'self care',
-        'child care',
-        'household products',
-        'education',
-        'leisure',
-        'other expenses',
-        'entertainment',
-      ],
+    categoryId: {
+      type: Schema.Types.ObjectId,
       required: true,
-      default: 'Products',
+      ref: 'category',
     },
     comment: {
       type: String,
-      default: ' ',
+      default: '',
     },
     sum: {
       type: Number,
       required: true,
       default: 0,
     },
-
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
