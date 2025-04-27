@@ -1,5 +1,4 @@
 import createHttpError from 'http-errors';
-
 import {
   createTransactions,
   deleteTransactions,
@@ -8,7 +7,6 @@ import {
   getBalance,
   getTransactionsByPeriod,
 } from '../services/wallet.js';
-
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 
@@ -18,21 +16,17 @@ export const getTransactionsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortOrder } = parseSortParams(req.query);
 
-  const transactions = await getTransactions(userId, {
+  const { transactions, pageInfo } = await getTransactions(userId, {
     page,
     perPage,
     sortOrder,
   });
 
-  const balance = await getBalance(userId);
-
   res.status(200).json({
     status: 200,
     message: 'Successfully found transactions!',
-    data: {
-      transactions,
-      balance,
-    },
+    transactions,
+    pageInfo,
   });
 };
 
@@ -41,16 +35,13 @@ export const createTransactionsController = async (req, res) => {
   const payload = req.body;
 
   const transaction = await createTransactions(userId, payload);
-
   const balance = await getBalance(userId);
 
   res.status(201).json({
     status: 201,
     message: 'Successfully created transactions!',
-    data: {
-      transaction,
-      balance,
-    },
+    transaction,
+    balance,
   });
 };
 
@@ -69,9 +60,7 @@ export const deleteTransactionsController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully deleted transaction!',
-    data: {
-      balance,
-    },
+    balance,
   });
 };
 
@@ -91,10 +80,8 @@ export const updateTransactionsController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a user transaction!',
-    data: {
-      transaction,
-      balance,
-    },
+    transaction,
+    balance,
   });
 };
 
@@ -106,7 +93,7 @@ export const getBalanceController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully found user balance!',
-    data: { balance },
+    balance,
   });
 };
 
@@ -153,6 +140,6 @@ export const getTransactionsByPeriodController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: `Successfully found transactions for period ${period}!`,
-    data: result,
+    ...result,
   });
 };

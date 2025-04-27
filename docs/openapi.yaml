@@ -15,8 +15,8 @@ tags:
     description: Wallet operations.
 
 servers:
-  - url: http://localhost:3000
   - url: https://project-codesamurai-backend.onrender.com
+  - url: http://localhost:3000
 paths:
   /wallet/balance:
     get:
