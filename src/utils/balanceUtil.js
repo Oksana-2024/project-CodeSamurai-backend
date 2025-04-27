@@ -4,27 +4,18 @@ import createHttpError from 'http-errors';
 
 export const recalculateUserBalance = async (userId) => {
   const user = await UsersCollection.findById(userId);
-  if (!user) {
-    throw createHttpError(404, 'User not found!');
-  }
 
-  const result = await TransactionsCollection.aggregate([
-    { $match: { userId: user._id } },
-    {
-      $group: {
-        _id: null,
-        totalAmount: { $sum: '$sum' },
-      },
-    },
-  ]);
+  const transactions = await TransactionsCollection.find({ userId: user._id });
 
-  let calculatedBalance = result.length > 0 ? result[0].totalAmount : 0;
+  const calculatedBalance = transactions.reduce((total, transaction) => {
+    return total + Number(transaction.sum);
+  }, 0);
 
-  calculatedBalance = parseFloat(calculatedBalance.toFixed(2));
+  const formattedBalance = parseFloat(calculatedBalance.toFixed(2));
 
   const updatedUser = await UsersCollection.findByIdAndUpdate(
     userId,
-    { balance: calculatedBalance },
+    { balance: formattedBalance },
     { new: true },
   );
 
@@ -32,9 +23,7 @@ export const recalculateUserBalance = async (userId) => {
     throw createHttpError(500, 'Failed to update user balance!');
   }
 
-  console.log(`Updated balance for user ${userId}: ${calculatedBalance}`);
-
-  return calculatedBalance;
+  return formattedBalance;
 };
 
 export const updateUserBalance = async (userId) => {
