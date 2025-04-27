@@ -1,18 +1,14 @@
 import Joi from 'joi';
-import { TRANSACTION_TYPES } from '../constans/index.js';
 
 export const createTransactionsSchema = Joi.object({
   date: Joi.date().required().messages({
     'any.required': 'Date is required',
     'date.base': 'Date should be date',
   }),
-  type: Joi.string()
-    .valid(TRANSACTION_TYPES.INCOME, TRANSACTION_TYPES.EXPENSE)
-    .required()
-    .messages({
-      'any.required': 'Type is required',
-      'any.only': `Type should be either "${TRANSACTION_TYPES.INCOME}" or "${TRANSACTION_TYPES.EXPENSE}"`,
-    }),
+  type: Joi.string().valid('income', 'expense').required().messages({
+    'any.required': 'Type is required',
+    'any.only': 'Type should be either "income" or "expense"',
+  }),
   categoryId: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/) // Перевірка на формат ObjectId
     .required()
@@ -35,11 +31,9 @@ export const updateTransactionsSchema = Joi.object({
   date: Joi.date().messages({
     'date.base': 'Date should be date',
   }),
-  type: Joi.string()
-    .valid(TRANSACTION_TYPES.INCOME, TRANSACTION_TYPES.EXPENSE)
-    .messages({
-      'any.only': `Type should be either "${TRANSACTION_TYPES.INCOME}" or "${TRANSACTION_TYPES.EXPENSE}"`,
-    }),
+  type: Joi.string().valid('income', 'expense').messages({
+    'any.only': 'Type should be either "income" or "expense"',
+  }),
   categoryId: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/) // Перевірка на формат ObjectId
     .messages({

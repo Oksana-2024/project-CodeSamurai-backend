@@ -1,5 +1,4 @@
 import { model, Schema } from 'mongoose';
-import { TRANSACTION_TYPES } from '../../constans/index.js';
 
 const transactionsSchema = new Schema(
   {
@@ -10,16 +9,14 @@ const transactionsSchema = new Schema(
     },
     type: {
       type: String,
-      enum: Object.values(TRANSACTION_TYPES),
+      enum: ['income', 'expense'],
       required: true,
-      default: TRANSACTION_TYPES.INCOME,
-      index: true,
+      default: 'income',
     },
     categoryId: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'category',
-      index: true,
     },
     comment: {
       type: String,
@@ -34,7 +31,6 @@ const transactionsSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'user',
-      index: true,
     },
   },
   {
@@ -42,8 +38,5 @@ const transactionsSchema = new Schema(
     versionKey: false,
   },
 );
-
-// Створюємо складений індекс для ефективного пошуку транзакцій за користувачем та періодом
-transactionsSchema.index({ userId: 1, date: 1 });
 
 export const TransactionsCollection = model('transaction', transactionsSchema);

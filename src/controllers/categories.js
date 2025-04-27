@@ -1,25 +1,19 @@
-import {
-  getAllCategories,
-  getCategoriesByType,
-} from '../services/categories.js';
+import createHttpError from 'http-errors';
 
-export const getAllCategoriesController = async (req, res) => {
-  const categories = await getAllCategories();
+import { getCategoryById } from '../services/categories.js';
 
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully found categories!',
-    data: categories,
-  });
-};
+export const getCategoryByIdController = async (req, res, next) => {
+  const { categoryId } = req.params;
 
-export const getCategoriesByTypeController = async (req, res) => {
-  const { type } = req.params;
-  const result = await getCategoriesByType(type);
+  const category = await getCategoryById(categoryId);
+
+  if (!category) {
+    throw createHttpError(404, `Category with ID ${categoryId} not found!`);
+  }
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully found categories by type!',
-    data: result,
+    message: `Successfully found category with ID ${categoryId}!`,
+    data: category,
   });
 };

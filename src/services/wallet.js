@@ -6,12 +6,12 @@ import { CategoriesCollection } from '../db/models/Categories.js';
 
 import { updateUserBalance } from '../utils/balanceUtil.js';
 
-import { MINIMUM_YEAR, TRANSACTION_TYPES } from '../constans/index.js';
+import { MINIMUM_YEAR } from '../constans/index.js';
 
 export const getTransactions = async (userId) => {
   const transactions = await TransactionsCollection.find({ userId }).populate(
     'categoryId',
-    'name type',
+    'name',
   );
 
   return transactions;
@@ -32,15 +32,9 @@ export const createTransactions = async (userId, payload) => {
   }
 
   const category = await CategoriesCollection.findById(payload.categoryId);
+
   if (!category) {
     throw createHttpError(404, 'Category not found!');
-  }
-
-  if (category.type !== payload.type) {
-    throw createHttpError(
-      400,
-      `Category type doesn't match transaction type. Category is for ${category.type} transactions.`,
-    );
   }
 
   const transactionData = {
@@ -54,7 +48,7 @@ export const createTransactions = async (userId, payload) => {
 
   const createdAndPopulatedTransaction = await TransactionsCollection.findById(
     newTransaction._id,
-  ).populate('categoryId', 'name type');
+  ).populate('categoryId', 'name');
 
   return createdAndPopulatedTransaction;
 };
@@ -63,7 +57,7 @@ export const deleteTransactions = async (id, userId) => {
   const deletedTransaction = await TransactionsCollection.findOneAndDelete({
     _id: id,
     userId,
-  }).populate('categoryId', 'name type');
+  }).populate('categoryId', 'name');
 
   if (!deletedTransaction) {
     return null;
@@ -86,27 +80,9 @@ export const updateTransactions = async (id, payload, userId) => {
 
   if (payload.categoryId) {
     const category = await CategoriesCollection.findById(payload.categoryId);
+
     if (!category) {
       throw createHttpError(404, 'Category not found!');
-    }
-
-    const transactionType = payload.type || oldTransaction.type;
-
-    if (category.type !== transactionType) {
-      throw createHttpError(
-        400,
-        `Category type doesn't match transaction type. Category is for ${category.type} transactions.`,
-      );
-    }
-  } else if (payload.type && oldTransaction.categoryId) {
-    const oldCategory = await CategoriesCollection.findById(
-      oldTransaction.categoryId,
-    );
-    if (oldCategory && oldCategory.type !== payload.type) {
-      throw createHttpError(
-        400,
-        `Cannot change transaction type to ${payload.type} as the current category is for ${oldCategory.type} transactions.`,
-      );
     }
   }
 
@@ -114,12 +90,9 @@ export const updateTransactions = async (id, payload, userId) => {
     { _id: id, userId },
     payload,
     { new: true },
-  ).populate('categoryId', 'name type');
+  ).populate('categoryId', 'name');
 
   if (!updatedTransaction) {
-    console.error(
-      `Failed to find updated transaction ${id} for user ${userId} after finding old transaction.`,
-    );
     return null;
   }
 
@@ -146,9 +119,7 @@ export const getTransactionsByPeriod = async (userId, year, month) => {
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
-  const expenseCategoriesDocs = await CategoriesCollection.find({
-    type: TRANSACTION_TYPES.EXPENSE,
-  })
+  const expenseCategoriesDocs = await CategoriesCollection.find({})
     .select('_id name')
     .lean();
 
@@ -162,7 +133,7 @@ export const getTransactionsByPeriod = async (userId, year, month) => {
     date: { $gte: startDate, $lte: endDate },
   })
 
-    .populate('categoryId', 'name type')
+    .populate('categoryId', 'name')
     .lean();
 
   const user = await UsersCollection.findById(userId).select('balance').lean();
@@ -184,9 +155,9 @@ export const getTransactionsByPeriod = async (userId, year, month) => {
 
     periodTotalAmount += sum;
 
-    if (type === TRANSACTION_TYPES.INCOME) {
+    if (type === 'income') {
       result.totalIncome += sum;
-    } else if (type === TRANSACTION_TYPES.EXPENSE) {
+    } else if (type === 'expense') {
       result.totalExpense += sum;
 
       if (categoryId && categoryId.name) {
@@ -196,15 +167,7 @@ export const getTransactionsByPeriod = async (userId, year, month) => {
           Object.prototype.hasOwnProperty.call(categoryAmounts, categoryName)
         ) {
           categoryAmounts[categoryName] += sum;
-        } else {
-          console.warn(
-            `Transaction with unknown expense category: ${categoryName} (Transaction ID: ${transaction._id})`,
-          );
         }
-      } else {
-        console.warn(
-          `Expense transaction without categoryId: ${transaction._id}`,
-        );
       }
     }
   });
@@ -214,6 +177,7 @@ export const getTransactionsByPeriod = async (userId, year, month) => {
   result.periodTransactions = periodTotalAmount;
 
   result.categoryExpenses = {};
+
   for (const categoryName in categoryAmounts) {
     if (
       Object.prototype.hasOwnProperty.call(categoryAmounts, categoryName) &&
