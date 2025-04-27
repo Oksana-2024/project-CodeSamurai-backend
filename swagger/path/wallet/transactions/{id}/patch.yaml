@@ -1,5 +1,5 @@
 tags:
-  - Wallet
+  - Transactions
 summary: Update transaction
 operationId: updateTransaction
 description: Update transaction with provided data
@@ -17,37 +17,33 @@ requestBody:
     application/json:
       schema:
         type: object
+        required:
+          - categoryId
+          - sum
         properties:
+          userId:
+            description: A unique ID for the user in the database. Expected to be a valid ObjectId format string.
+            pattern: '^[0-9a-fA-F]{24}$'
+            type: string
+            example: 67cd81343b84f810f27e521f
           date:
-            description: 'Date of the transaction'
+            description: Date of the transaction
             type: string
             format: date-time
             example: '2025-04-01T00:00:00.000Z'
           type:
-            description: 'Type of the transaction'
+            description: Type of the transaction. Expected to be 'income' or 'expense'
             type: string
             enum: ['income', 'expense']
             example: income
-          category:
-            description: 'Category of the transaction'
+            default: income
+          categoryId:
+            description: A unique ID for the category in the database. Expected to be a valid ObjectId format string.
+            pattern: '^[0-9a-fA-F]{24}$'
             type: string
-            enum:
-              [
-                'income',
-                'main expenses',
-                'products',
-                'car',
-                'self care',
-                'child care',
-                'household products',
-                'education',
-                'leisure',
-                'other expenses',
-                'entertainment',
-              ]
-            example: products
+            example: 680a680d4d3d230f60d30fc1
           sum:
-            description: 'Sum of the transaction'
+            description: The amount of the transaction. Must be a positive number.
             type: number
             example: 15423.6
           comment:
@@ -63,7 +59,8 @@ responses:
           required:
             - status
             - message
-            - data
+            - transaction
+            - balance
           properties:
             status:
               type: integer
@@ -71,8 +68,12 @@ responses:
             message:
               type: string
               example: 'Successfully patched a user transactions!'
-            data:
+            transaction:
+              type: object
               $ref: ../../../../components/schemas/transactions.yaml
+            balance:
+              type: number
+              example: 1000.50
   '400':
     $ref: ../../../../components/responses/400.yaml
   '401':

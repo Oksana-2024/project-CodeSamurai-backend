@@ -1,13 +1,30 @@
 tags:
-  - Wallet
-summary: Get list of user's transactions
-operationId: getContacts
-description: Get list of user's transactions
+  - Transactions
+summary: Get user's transactions with pagination and sorting
+operationId: getTransactions
+description: Retrieve a paginated and sorted list of transactions for the authenticated user.
 security:
   - bearerAuth: []
+parameters:
+  - in: query
+    name: page
+    schema:
+      type: integer
+      example:
+  - in: query
+    name: perPage
+    schema:
+      type: integer
+      example: 10
+  - in: query
+    name: sortOrder
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: desc
 responses:
   '200':
-    description: 'Successfully found transactions!'
+    description: Successfully retrieved transactions
     content:
       application/json:
         schema:
@@ -15,65 +32,42 @@ responses:
           required:
             - status
             - message
-            - data
+            - transactions
+            - pageInfo
           properties:
             status:
               type: integer
               example: 200
             message:
               type: string
-              example: 'Successfully found transactions!'
-            data:
+              example: Successfully retrieved transactions
+            transactions:
               type: array
               items:
-                $ref: ../../../components/schemas/transactions.yaml
                 type: object
-                required:
-                  - _id
-                  - date
-                  - type
-                  - category
-                  - sum
-                  - userId
-                properties:
-                  _id:
-                    type: string
-                    example: 67cece57cf044b5afacf7749
-                  date:
-                    type: string
-                    format: date-time
-                    example: '2025-04-01T00:00:00.000Z'
-                  type:
-                    type: string
-                    enum: ['income', 'expense']
-                    example: income
-                  category:
-                    type: string
-                    enum:
-                      [
-                        'income',
-                        'main expenses',
-                        'products',
-                        'car',
-                        'self care',
-                        'child care',
-                        'household products',
-                        'education',
-                        'leisure',
-                        'other expenses',
-                        'entertainment',
-                      ]
-                    example: products
-                  sum:
-                    type: number
-                    example: 15423.6
-                  userId:
-                    type: string
-                    example: 67cd81343b84f810f27e521f
-                  comment:
-                    type: string
-                    example: Products in the supermarket
+                $ref: ../../../components/schemas/transactions.yaml
+            pageInfo:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                perPage:
+                  type: integer
+                  example: 8
+                totalItems:
+                  type: integer
+                  example: 11
+                totalPages:
+                  type: integer
+                  example: 2
+                hasNextPage:
+                  type: boolean
+                  example: true
+                hasPreviousPage:
+                  type: boolean
+                  example: false
   '401':
-    $ref: ../../../components/responses/401.yaml
+    $ref: '../../../components/responses/401.yaml'
   '500':
-    $ref: ../../../components/responses/500.yaml
+    $ref: '../../../components/responses/500.yaml'

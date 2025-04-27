@@ -3,16 +3,17 @@ required:
   - _id
   - date
   - type
-  - category
+  - categoryId
   - sum
   - userId
 properties:
   _id:
-    description: transactions's id
+    description: A unique ID for the user in the database. Automatically generated when the transaction is created.
     type: string
     example: 67cece57cf044b5afacf7749
   userId:
-    description: Contact's user id
+    description: A unique ID for the user in the database. Expected to be a valid ObjectId format string.
+    pattern: '^[0-9a-fA-F]{24}$'
     type: string
     example: 67cd81343b84f810f27e521f
   date:
@@ -21,37 +22,22 @@ properties:
     format: date-time
     example: '2025-04-01T00:00:00.000Z'
   type:
-    description: Type of the transaction
+    description: Type of the transaction. Expected to be 'income' or 'expense'
     type: string
     enum: ['income', 'expense']
     example: income
     default: income
-  category:
-    description: Category of the transaction
+  categoryId:
+    description: A unique ID for the category in the database. Expected to be a valid ObjectId format string.
+    pattern: '^[0-9a-fA-F]{24}$'
     type: string
-    enum:
-      [
-        'income',
-        'main expenses',
-        'products',
-        'car',
-        'self care',
-        'child care',
-        'household products',
-        'education',
-        'leisure',
-        'other expenses',
-        'entertainment',
-      ]
-    example: products
-    default: products
+    example: 680a680d4d3d230f60d30fc1
   sum:
-    description: Sum of the transaction
+    description: The amount of the transaction. Must be a positive number.
     type: number
     example: 15423.6
-    default: 0
   comment:
-    description: Comment of the transaction
+    description: Optional comment for the transaction. Can be an empty string
     type: string
     example: Products in the supermarket
     default: ' '

@@ -1,5 +1,5 @@
 tags:
-  - Wallet
+  - Transactions
 summary: Get list of user's statistics transactions by period
 operationId: getTransactionsByPeriod
 description: Get list of user's statistics transactions by period
@@ -26,7 +26,12 @@ responses:
           required:
             - status
             - message
-            - data
+            - totalBalance
+            - periodIncomeOutcome
+            - totalIncome
+            - totalExpense
+            - categoryExpenses
+            - periodTransactions
           properties:
             status:
               type: integer
@@ -34,32 +39,34 @@ responses:
             message:
               type: string
               example: 'Successfully found transactions for this period!'
-            data:
+            totalBalance:
+              type: number
+              example: 52000
+              #Поточний загальний баланс
+            periodIncomeOutcome:
+              type: number
+              example: 15250
+              #Різниця між доходами та витратами за період
+            totalIncome:
+              type: number
+              example: 17000
+              #Загальна сума доходів за період
+            totalExpense:
+              type: number
+              example: 1751
+              #Загальна сума витрат за період
+            categoryExpenses:
               type: object
-              required:
-                - totalBalance
-                - totalIncome
-                - totalExpense
-                - categoryExpenses
-                - periodType
-              properties:
-                totalBalance:
-                  type: number
-                  example: 15299.5
-                totalIncome:
-                  type: number
-                  example: 17000
-                totalExpense:
-                  type: number
-                  example: 1700.5
-                categoryExpenses:
-                  type: object
-                  example:
-                    "products": 350.5
-                    "car": 1350
-                periodType:
-                  type: string
-                  example: "past"
+              example:
+                "products": 350.50
+                "car": 1350.50
+              #Витрати по категоріях за період
+            periodTransactions:
+              type: number
+              example: 18751
+              #Загальна сума всіх транзакцій (доходи + витрати) за період
+  '400':
+    $ref: ../../../components/responses/400.yaml
   '401':
     $ref: ../../../components/responses/401.yaml
   '500':
