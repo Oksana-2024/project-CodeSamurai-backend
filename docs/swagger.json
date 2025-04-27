@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Money Guard app",
+    "title": "Money Guard App",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -11,10 +11,10 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "https://project-codesamurai-backend.onrender.com"
     },
     {
-      "url": "https://project-codesamurai-backend.onrender.com"
+      "url": "http://localhost:3000"
     }
   ],
   "tags": [
@@ -23,19 +23,23 @@
       "description": "Auth operations."
     },
     {
-      "name": "User",
-      "description": "User operations."
+      "name": "Current Users",
+      "description": "Current Users operations."
     },
     {
-      "name": "Wallet",
-      "description": "Wallet operations."
+      "name": "Transactions",
+      "description": "Transactions operations."
+    },
+    {
+      "name": "Categories",
+      "description": "Categories operations."
     }
   ],
   "paths": {
-    "/wallet/balance": {
+    "/balance": {
       "get": {
         "tags": [
-          "Wallet"
+          "Transactions"
         ],
         "summary": "Get list of user's balance",
         "operationId": "getUserBalance",
@@ -55,7 +59,7 @@
                   "required": [
                     "status",
                     "message",
-                    "data"
+                    "balance"
                   ],
                   "properties": {
                     "status": {
@@ -66,8 +70,7 @@
                       "type": "string",
                       "example": "Successfully found a user balance!"
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/user",
+                    "balance": {
                       "type": "number",
                       "example": 1000.5
                     }
@@ -85,10 +88,10 @@
         }
       }
     },
-    "/wallet/statistics": {
+    "/statistics": {
       "get": {
         "tags": [
-          "Wallet"
+          "Transactions"
         ],
         "summary": "Get list of user's statistics transactions by period",
         "operationId": "getTransactionsByPeriod",
@@ -126,7 +129,12 @@
                   "required": [
                     "status",
                     "message",
-                    "data"
+                    "totalBalance",
+                    "periodIncomeOutcome",
+                    "totalIncome",
+                    "totalExpense",
+                    "categoryExpenses",
+                    "periodTransactions"
                   ],
                   "properties": {
                     "status": {
@@ -137,272 +145,32 @@
                       "type": "string",
                       "example": "Successfully found transactions for this period!"
                     },
-                    "data": {
+                    "totalBalance": {
+                      "type": "number",
+                      "example": 52000
+                    },
+                    "periodIncomeOutcome": {
+                      "type": "number",
+                      "example": 15250
+                    },
+                    "totalIncome": {
+                      "type": "number",
+                      "example": 17000
+                    },
+                    "totalExpense": {
+                      "type": "number",
+                      "example": 1751
+                    },
+                    "categoryExpenses": {
                       "type": "object",
-                      "required": [
-                        "totalBalance",
-                        "totalIncome",
-                        "totalExpense",
-                        "categoryExpenses",
-                        "periodType"
-                      ],
-                      "properties": {
-                        "totalBalance": {
-                          "type": "number",
-                          "example": 15299.5
-                        },
-                        "totalIncome": {
-                          "type": "number",
-                          "example": 17000
-                        },
-                        "totalExpense": {
-                          "type": "number",
-                          "example": 1700.5
-                        },
-                        "categoryExpenses": {
-                          "type": "object",
-                          "example": {
-                            "products": 350.5,
-                            "car": 1350
-                          }
-                        },
-                        "periodType": {
-                          "type": "string",
-                          "example": "past"
-                        }
+                      "example": {
+                        "products": 350.5,
+                        "car": 1350.5
                       }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/wallet/transactions": {
-      "get": {
-        "tags": [
-          "Wallet"
-        ],
-        "summary": "Get list of user's transactions",
-        "operationId": "getContacts",
-        "description": "Get list of user's transactions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully found transactions!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
                     },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found transactions!"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/transactions",
-                        "type": "object",
-                        "required": [
-                          "_id",
-                          "date",
-                          "type",
-                          "category",
-                          "sum",
-                          "userId"
-                        ],
-                        "properties": {
-                          "_id": {
-                            "type": "string",
-                            "example": "67cece57cf044b5afacf7749"
-                          },
-                          "date": {
-                            "type": "string",
-                            "format": "date-time",
-                            "example": "2025-04-01T00:00:00.000Z"
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "income",
-                              "expense"
-                            ],
-                            "example": "income"
-                          },
-                          "category": {
-                            "type": "string",
-                            "enum": [
-                              "income",
-                              "main expenses",
-                              "products",
-                              "car",
-                              "self care",
-                              "child care",
-                              "household products",
-                              "education",
-                              "leisure",
-                              "other expenses",
-                              "entertainment"
-                            ],
-                            "example": "products"
-                          },
-                          "sum": {
-                            "type": "number",
-                            "example": 15423.6
-                          },
-                          "userId": {
-                            "type": "string",
-                            "example": "67cd81343b84f810f27e521f"
-                          },
-                          "comment": {
-                            "type": "string",
-                            "example": "Products in the supermarket"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Wallet"
-        ],
-        "summary": "Create transactions",
-        "operationId": "createTransactions",
-        "description": "Create a transaction with payload",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "_id",
-                  "date",
-                  "type",
-                  "category",
-                  "sum",
-                  "userId"
-                ],
-                "properties": {
-                  "_id": {
-                    "description": "transactions's id",
-                    "type": "string",
-                    "example": "67cece57cf044b5afacf7749"
-                  },
-                  "userId": {
-                    "description": "Contact's user id",
-                    "type": "string",
-                    "example": "67cd81343b84f810f27e521f"
-                  },
-                  "date": {
-                    "description": "Date of the transaction",
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-04-01T00:00:00.000Z"
-                  },
-                  "type": {
-                    "description": "Type of the transaction",
-                    "type": "string",
-                    "enum": [
-                      "income",
-                      "expense"
-                    ],
-                    "example": "income"
-                  },
-                  "category": {
-                    "description": "Category of the transaction",
-                    "type": "string",
-                    "enum": [
-                      "income",
-                      "main expenses",
-                      "products",
-                      "car",
-                      "self care",
-                      "child care",
-                      "household products",
-                      "education",
-                      "leisure",
-                      "other expenses",
-                      "entertainment"
-                    ],
-                    "example": "products"
-                  },
-                  "sum": {
-                    "description": "Sum of the transaction",
-                    "type": "number",
-                    "example": 15423.6
-                  },
-                  "comment": {
-                    "description": "Comment of the transaction",
-                    "type": "string",
-                    "example": "Products in the supermarket"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully created transactions!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 201
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully created transactions!"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/transactions"
+                    "periodTransactions": {
+                      "type": "number",
+                      "example": 18751
                     }
                   }
                 }
@@ -421,10 +189,244 @@
         }
       }
     },
-    "/wallet/transactions/{id}": {
+    "/transactions": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Get user's transactions with pagination and sorting",
+        "operationId": "getTransactions",
+        "description": "Retrieve a paginated and sorted list of transactions for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "transactions",
+                    "pageInfo"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully retrieved transactions"
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/transactions"
+                      }
+                    },
+                    "pageInfo": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 8
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 11
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Create transactions",
+        "operationId": "createTransactions",
+        "description": "Create a transaction with payload",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "date",
+                  "type",
+                  "categoryId",
+                  "sum"
+                ],
+                "properties": {
+                  "_id": {
+                    "description": "A unique ID for the user in the database. Automatically generated when the transaction is created.",
+                    "type": "string",
+                    "example": "67cece57cf044b5afacf7749"
+                  },
+                  "userId": {
+                    "description": "A unique ID for the user in the database. Expected to be a valid ObjectId format string.",
+                    "pattern": "^[0-9a-fA-F]{24}$",
+                    "type": "string",
+                    "example": "67cd81343b84f810f27e521f"
+                  },
+                  "date": {
+                    "description": "Date of the transaction",
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-04-01T00:00:00.000Z"
+                  },
+                  "type": {
+                    "description": "Type of the transaction. Expected to be 'income' or 'expense'",
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ],
+                    "example": "income",
+                    "default": "income"
+                  },
+                  "categoryId": {
+                    "description": "A unique ID for the category in the database. Expected to be a valid ObjectId format string.",
+                    "pattern": "^[0-9a-fA-F]{24}$",
+                    "type": "string",
+                    "example": "680a680d4d3d230f60d30fc1"
+                  },
+                  "sum": {
+                    "description": "The amount of the transaction. Must be a positive number.",
+                    "type": "number",
+                    "example": 15423.6
+                  },
+                  "comment": {
+                    "description": "Optional comment for the transaction. Can be an empty string",
+                    "type": "string",
+                    "example": "Products in the supermarket",
+                    "default": " "
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created transactions!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "transaction",
+                    "balance"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully created transactions!"
+                    },
+                    "transaction": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/transactions"
+                    },
+                    "balance": {
+                      "type": "number",
+                      "example": 54827.54
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
       "patch": {
         "tags": [
-          "Wallet"
+          "Transactions"
         ],
         "summary": "Update transaction",
         "operationId": "updateTransaction",
@@ -450,7 +452,17 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "categoryId",
+                  "sum"
+                ],
                 "properties": {
+                  "userId": {
+                    "description": "A unique ID for the user in the database. Expected to be a valid ObjectId format string.",
+                    "pattern": "^[0-9a-fA-F]{24}$",
+                    "type": "string",
+                    "example": "67cd81343b84f810f27e521f"
+                  },
                   "date": {
                     "description": "Date of the transaction",
                     "type": "string",
@@ -458,34 +470,23 @@
                     "example": "2025-04-01T00:00:00.000Z"
                   },
                   "type": {
-                    "description": "Type of the transaction",
+                    "description": "Type of the transaction. Expected to be 'income' or 'expense'",
                     "type": "string",
                     "enum": [
                       "income",
                       "expense"
                     ],
-                    "example": "income"
+                    "example": "income",
+                    "default": "income"
                   },
-                  "category": {
-                    "description": "Category of the transaction",
+                  "categoryId": {
+                    "description": "A unique ID for the category in the database. Expected to be a valid ObjectId format string.",
+                    "pattern": "^[0-9a-fA-F]{24}$",
                     "type": "string",
-                    "enum": [
-                      "income",
-                      "main expenses",
-                      "products",
-                      "car",
-                      "self care",
-                      "child care",
-                      "household products",
-                      "education",
-                      "leisure",
-                      "other expenses",
-                      "entertainment"
-                    ],
-                    "example": "products"
+                    "example": "680a680d4d3d230f60d30fc1"
                   },
                   "sum": {
-                    "description": "Sum of the transaction",
+                    "description": "The amount of the transaction. Must be a positive number.",
                     "type": "number",
                     "example": 15423.6
                   },
@@ -508,7 +509,8 @@
                   "required": [
                     "status",
                     "message",
-                    "data"
+                    "transaction",
+                    "balance"
                   ],
                   "properties": {
                     "status": {
@@ -519,8 +521,13 @@
                       "type": "string",
                       "example": "Successfully patched a user transactions!"
                     },
-                    "data": {
+                    "transaction": {
+                      "type": "object",
                       "$ref": "#/components/schemas/transactions"
+                    },
+                    "balance": {
+                      "type": "number",
+                      "example": 1000.5
                     }
                   }
                 }
@@ -543,7 +550,7 @@
       },
       "delete": {
         "tags": [
-          "Wallet"
+          "Transactions"
         ],
         "summary": "Delete transaction",
         "operationId": "deleteTransactions",
@@ -565,8 +572,34 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Successfully deleted transaction!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "balance"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully deleted transaction!"
+                    },
+                    "balance": {
+                      "type": "number",
+                      "example": 1000.5
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -580,10 +613,10 @@
         }
       }
     },
-    "/user": {
+    "/currentUsers": {
       "get": {
         "tags": [
-          "User"
+          "Current Users"
         ],
         "summary": "Get user profile",
         "operationId": "getUserProfile",
@@ -635,10 +668,10 @@
         }
       }
     },
-    "/user/{id}": {
+    "/currentUsers/{id}": {
       "patch": {
         "tags": [
-          "User"
+          "Current Users"
         ],
         "summary": "Update user profile",
         "operationId": "updateUserProfile",
@@ -666,12 +699,15 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "description": "User`s name",
+                    "description": "Must contain letters, with a minimum of 3 and a maximum of 20 characters.\n",
                     "type": "string",
+                    "minLength": 3,
+                    "maxLength": 20,
                     "example": "John Doe"
                   },
                   "photo": {
-                    "description": "Link to user`s photo",
+                    "description": "Photo must be a valid image URL and cannot exceed 500 characters",
+                    "pattern": "^(https?:\\\\/\\\\/)?([\\\\da-z\\\\.-]+)\\\\.([a-z\\\\.]{2,6})([\\\\/\\\\w \\\\.-]*)*\\\\/?(\\\\.(jpg|jpeg|png|gif|bmp|webp))?$",
                     "format": "binary",
                     "type": "string",
                     "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
@@ -939,6 +975,61 @@
           }
         }
       }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get All Categories",
+        "operationId": "getAllCategories",
+        "description": "Get  All Categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found all categories!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "categories"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found all categories!"
+                    },
+                    "category": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/categories"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -946,139 +1037,6 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer"
-      }
-    },
-    "schemas": {
-      "user": {
-        "type": "object",
-        "required": [
-          "_id",
-          "name",
-          "email",
-          "password"
-        ],
-        "properties": {
-          "_id": {
-            "description": "A unique ID for the user in the database. Automatically generated when the user is created.\n",
-            "type": "string",
-            "example": "67cd81343b84f810f27e521f"
-          },
-          "name": {
-            "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 20,
-            "example": "John Doe"
-          },
-          "email": {
-            "description": "The user's email address, used as a unique login credential. Must be a valid email format and no more than 64 characters long. This field is required for both registration and login.\n",
-            "type": "string",
-            "format": "email",
-            "maxLength": 64,
-            "example": "example@mail.com"
-          },
-          "password": {
-            "description": "The user's password. Must be between 6 and 20 characters. It must include at least:\n- one uppercase letter,\n- one lowercase letter,\n- one number,\n- one special character (!@#$%^&* etc).\nShould not contain whitespace. Required for account creation.\n",
-            "type": "string",
-            "minLength": 6,
-            "maxLength": 20,
-            "example": "pCVVJHbCsY57"
-          },
-          "balance": {
-            "description": "The user's current financial balance represented as a number. This field is optional and defaults to 0.\nThe balance can be updated through transactions, displayed on the user's dashboard or profile page to show their current available balance in real-time.\n",
-            "type": "number",
-            "default": 0,
-            "example": 0
-          },
-          "photo": {
-            "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL\nand can be used to personalize the user's profile page.\n",
-            "type": "string",
-            "format": "uri",
-            "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
-          }
-        }
-      },
-      "transactions": {
-        "type": "object",
-        "required": [
-          "_id",
-          "date",
-          "type",
-          "category",
-          "sum",
-          "userId"
-        ],
-        "properties": {
-          "_id": {
-            "description": "transactions's id",
-            "type": "string",
-            "example": "67cece57cf044b5afacf7749"
-          },
-          "userId": {
-            "description": "Contact's user id",
-            "type": "string",
-            "example": "67cd81343b84f810f27e521f"
-          },
-          "date": {
-            "description": "Date of the transaction",
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-04-01T00:00:00.000Z"
-          },
-          "type": {
-            "description": "Type of the transaction",
-            "type": "string",
-            "enum": [
-              "income",
-              "expense"
-            ],
-            "example": "income",
-            "default": "income"
-          },
-          "category": {
-            "description": "Category of the transaction",
-            "type": "string",
-            "enum": [
-              "income",
-              "main expenses",
-              "products",
-              "car",
-              "self care",
-              "child care",
-              "household products",
-              "education",
-              "leisure",
-              "other expenses",
-              "entertainment"
-            ],
-            "example": "products",
-            "default": "products"
-          },
-          "sum": {
-            "description": "Sum of the transaction",
-            "type": "number",
-            "example": 15423.6,
-            "default": 0
-          },
-          "comment": {
-            "description": "Comment of the transaction",
-            "type": "string",
-            "example": "Products in the supermarket",
-            "default": " "
-          },
-          "createdAt": {
-            "description": "Transaction's creation date",
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-04-01T00:00:00.000Z"
-          },
-          "updatedAt": {
-            "description": "Transaction's last update date",
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-04-01T00:00:00.000Z"
-          }
-        }
       }
     },
     "responses": {
@@ -1264,6 +1222,157 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "transactions": {
+        "type": "object",
+        "required": [
+          "_id",
+          "date",
+          "type",
+          "categoryId",
+          "sum",
+          "userId"
+        ],
+        "properties": {
+          "_id": {
+            "description": "A unique ID for the user in the database. Automatically generated when the transaction is created.",
+            "type": "string",
+            "example": "67cece57cf044b5afacf7749"
+          },
+          "userId": {
+            "description": "A unique ID for the user in the database. Expected to be a valid ObjectId format string.",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "type": "string",
+            "example": "67cd81343b84f810f27e521f"
+          },
+          "date": {
+            "description": "Date of the transaction",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
+          },
+          "type": {
+            "description": "Type of the transaction. Expected to be 'income' or 'expense'",
+            "type": "string",
+            "enum": [
+              "income",
+              "expense"
+            ],
+            "example": "income",
+            "default": "income"
+          },
+          "categoryId": {
+            "description": "A unique ID for the category in the database. Expected to be a valid ObjectId format string.",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "type": "string",
+            "example": "680a680d4d3d230f60d30fc1"
+          },
+          "sum": {
+            "description": "The amount of the transaction. Must be a positive number.",
+            "type": "number",
+            "example": 15423.6
+          },
+          "comment": {
+            "description": "Optional comment for the transaction. Can be an empty string",
+            "type": "string",
+            "example": "Products in the supermarket",
+            "default": " "
+          },
+          "createdAt": {
+            "description": "Transaction's creation date",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "description": "Transaction's last update date",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "_id": {
+            "description": "A unique ID for the user in the database. Automatically generated when the user is created.\n",
+            "type": "string",
+            "example": "67cd81343b84f810f27e521f"
+          },
+          "name": {
+            "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 20,
+            "example": "John Doe"
+          },
+          "email": {
+            "description": "The user's email address, used as a unique login credential. Must be a valid email format and no more than 64 characters long. This field is required for both registration and login.\n",
+            "type": "string",
+            "format": "email",
+            "maxLength": 64,
+            "example": "example@mail.com"
+          },
+          "password": {
+            "description": "The user's password. Must be between 6 and 20 characters. It must include at least:\n- one uppercase letter,\n- one lowercase letter,\n- one number,\n- one special character (!@#$%^&* etc).\nShould not contain whitespace. Required for account creation.\n",
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "example": "pCVVJHbCsY57"
+          },
+          "balance": {
+            "description": "The user's current financial balance represented as a number. This field is optional and defaults to 0.\nThe balance can be updated through transactions, displayed on the user's dashboard or profile page to show their current available balance in real-time.\n",
+            "type": "number",
+            "default": 0,
+            "example": 0
+          },
+          "photo": {
+            "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL\nand can be used to personalize the user's profile page.\n",
+            "type": "string",
+            "format": "uri",
+            "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+          }
+        }
+      },
+      "categories": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name"
+        ],
+        "properties": {
+          "_id": {
+            "description": "A unique ID for the user in the database. Automatically generated when the category is created.",
+            "type": "string",
+            "example": "680a680d4d3d230f60d30fc1"
+          },
+          "name": {
+            "description": "Name of the category",
+            "type": "string",
+            "example": "Main expenses"
+          },
+          "createdAt": {
+            "description": "Transaction's creation date",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "description": "Transaction's last update date",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
           }
         }
       }

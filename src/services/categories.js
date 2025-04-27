@@ -1,15 +1,9 @@
-import createHttpError from 'http-errors';
-
 import { CategoriesCollection } from '../db/models/Categories.js';
 
-export const getCategoryById = async (categoryId) => {
-  if (!categoryId) {
-    throw createHttpError(400, 'Invalid category ID format.');
-  }
-
-  const category = await CategoriesCollection.findById(categoryId)
-    .select('_id name type')
+export const getAllCategories = async () => {
+  const categories = await CategoriesCollection.find()
+    .select('_id name')
     .lean();
 
-  return category;
+  return categories;
 };

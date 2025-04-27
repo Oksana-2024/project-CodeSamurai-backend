@@ -1,0 +1,23 @@
+type: object
+required:
+  - _id
+  - name
+properties:
+  _id:
+    description: A unique ID for the user in the database. Automatically generated when the category is created.
+    type: string
+    example: 680a680d4d3d230f60d30fc1
+  name:
+    description: Name of the category
+    type: string
+    example: 'Main expenses'
+  createdAt:
+    description: Transaction's creation date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'
+  updatedAt:
+    description: Transaction's last update date
+    type: string
+    format: date-time
+    example: '2025-04-01T00:00:00.000Z'

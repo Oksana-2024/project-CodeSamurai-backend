@@ -1,5 +1,5 @@
 tags:
-  - User
+  - Current Users
 summary: Update user profile
 operationId: updateUserProfile
 description: Update user profile with provided data
@@ -19,11 +19,15 @@ requestBody:
         type: object
         properties:
           name:
-            description: 'User`s name'
+            description: |
+              Must contain letters, with a minimum of 3 and a maximum of 20 characters.
             type: string
+            minLength: 3
+            maxLength: 20
             example: 'John Doe'
           photo:
-            description: 'Link to user`s photo'
+            description: Photo must be a valid image URL and cannot exceed 500 characters
+            pattern: '^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?(\\.(jpg|jpeg|png|gif|bmp|webp))?$'
             format: binary
             type: string
             example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'

@@ -1,5 +1,5 @@
 tags:
-  - Wallet
+  - Transactions
 summary: Get list of user's balance
 operationId: getUserBalance
 description: Get list of user's balance
@@ -15,7 +15,7 @@ responses:
           required:
             - status
             - message
-            - data
+            - balance
           properties:
             status:
               type: integer
@@ -23,10 +23,9 @@ responses:
             message:
               type: string
               example: 'Successfully found a user balance!'
-            data:
-              $ref: ../../../components/schemas/user.yaml
+            balance:
               type: number
-              example: 1000.5
+              example: 1000.50
   '401':
     $ref: ../../../components/responses/401.yaml
   '500':
