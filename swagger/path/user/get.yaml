@@ -25,6 +25,7 @@ responses:
               example: 'Successfully fetched a user profile!'
             data:
               type: object
+              $ref: ../../components/schemas/user.yaml
               properties:
                 _id:
                   type: string

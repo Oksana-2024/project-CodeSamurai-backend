@@ -50,6 +50,7 @@ responses:
               example: 'Successfully patched a user profile!'
             data:
               type: object
+              $ref: ../../../components/schemas/user.yaml
               properties:
                 name:
                   type: string
