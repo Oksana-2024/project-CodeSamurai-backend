@@ -19,14 +19,14 @@ requestBody:
         type: object
         properties:
           name:
-            description: |
+            description:
               Must contain letters, with a minimum of 3 and a maximum of 20 characters.
             type: string
             minLength: 3
             maxLength: 20
             example: 'John Doe'
           photo:
-            description: Photo must be a valid image URL and cannot exceed 500 characters
+            description: Photo must be a valid image URL and cannot exceed 500 characters. Format jpg, jpeg, png, webp.
             pattern: '^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?(\\.(jpg|jpeg|png|gif|bmp|webp))?$'
             format: binary
             type: string
@@ -49,7 +49,20 @@ responses:
               type: string
               example: 'Successfully patched a user profile!'
             data:
-              $ref: ../../../components/schemas/user.yaml
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'John Doe'
+                email:
+                  type: string
+                  example: 'example@mail.com'
+                photo:
+                  type: string
+                  example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
+                balance:
+                  type: number
+                  example: 50253.12
   '400':
     $ref: ../../../components/responses/400.yaml
   '401':

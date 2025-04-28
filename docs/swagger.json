@@ -649,7 +649,28 @@
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/user"
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "67cd81343b84f810f27e521f"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "example@mail.com"
+                        },
+                        "photo": {
+                          "type": "string",
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 50253.12
+                        }
+                      }
                     }
                   }
                 }
@@ -699,14 +720,14 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "description": "Must contain letters, with a minimum of 3 and a maximum of 20 characters.\n",
+                    "description": "Must contain letters, with a minimum of 3 and a maximum of 20 characters.",
                     "type": "string",
                     "minLength": 3,
                     "maxLength": 20,
                     "example": "John Doe"
                   },
                   "photo": {
-                    "description": "Photo must be a valid image URL and cannot exceed 500 characters",
+                    "description": "Photo must be a valid image URL and cannot exceed 500 characters. Format jpg, jpeg, png, webp.",
                     "pattern": "^(https?:\\\\/\\\\/)?([\\\\da-z\\\\.-]+)\\\\.([a-z\\\\.]{2,6})([\\\\/\\\\w \\\\.-]*)*\\\\/?(\\\\.(jpg|jpeg|png|gif|bmp|webp))?$",
                     "format": "binary",
                     "type": "string",
@@ -738,7 +759,25 @@
                       "example": "Successfully patched a user profile!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/user"
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "example@mail.com"
+                        },
+                        "photo": {
+                          "type": "string",
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 50253.12
+                        }
+                      }
                     }
                   }
                 }
@@ -1293,55 +1332,6 @@
             "type": "string",
             "format": "date-time",
             "example": "2025-04-01T00:00:00.000Z"
-          }
-        }
-      },
-      "user": {
-        "type": "object",
-        "required": [
-          "_id",
-          "name",
-          "email",
-          "password"
-        ],
-        "properties": {
-          "_id": {
-            "description": "A unique ID for the user in the database. Automatically generated when the user is created.\n",
-            "type": "string",
-            "example": "67cd81343b84f810f27e521f"
-          },
-          "name": {
-            "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 20,
-            "example": "John Doe"
-          },
-          "email": {
-            "description": "The user's email address, used as a unique login credential. Must be a valid email format and no more than 64 characters long. This field is required for both registration and login.\n",
-            "type": "string",
-            "format": "email",
-            "maxLength": 64,
-            "example": "example@mail.com"
-          },
-          "password": {
-            "description": "The user's password. Must be between 6 and 20 characters. It must include at least:\n- one uppercase letter,\n- one lowercase letter,\n- one number,\n- one special character (!@#$%^&* etc).\nShould not contain whitespace. Required for account creation.\n",
-            "type": "string",
-            "minLength": 6,
-            "maxLength": 20,
-            "example": "pCVVJHbCsY57"
-          },
-          "balance": {
-            "description": "The user's current financial balance represented as a number. This field is optional and defaults to 0.\nThe balance can be updated through transactions, displayed on the user's dashboard or profile page to show their current available balance in real-time.\n",
-            "type": "number",
-            "default": 0,
-            "example": 0
-          },
-          "photo": {
-            "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL\nand can be used to personalize the user's profile page.\n",
-            "type": "string",
-            "format": "uri",
-            "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
           }
         }
       },
