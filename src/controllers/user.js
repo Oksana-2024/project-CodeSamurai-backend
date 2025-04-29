@@ -27,7 +27,7 @@ export const userProfileController = async (req, res) => {
 };
 
 export const updateUserProfileController = async (req, res) => {
-  const { id } = req.params;
+  const { _id: userId } = req.user;
   const photo = req.file;
 
   let photoUrl;
@@ -45,7 +45,7 @@ export const updateUserProfileController = async (req, res) => {
     ...(photoUrl && { photo: photoUrl }),
   };
 
-  const updatedProfile = await updateUserProfile(id, updatePayload);
+  const updatedProfile = await updateUserProfile(userId, updatePayload);
 
   if (!updatedProfile) throw createHttpError(404, 'User profile not found!');
 
