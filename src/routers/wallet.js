@@ -5,7 +5,6 @@ import {
   createTransactionsController,
   updateTransactionsController,
   deleteTransactionsController,
-  getBalanceController,
   getTransactionsByPeriodController,
 } from '../controllers/wallet.js';
 
@@ -46,8 +45,9 @@ transactionsRouter.delete(
   ctrlWrapper(deleteTransactionsController),
 );
 
-transactionsRouter.get('/balance', ctrlWrapper(getBalanceController));
-
-transactionsRouter.get('/statistics', ctrlWrapper(getTransactionsByPeriodController));
+transactionsRouter.get(
+  '/statistics',
+  ctrlWrapper(getTransactionsByPeriodController),
+);
 
 export default transactionsRouter;
