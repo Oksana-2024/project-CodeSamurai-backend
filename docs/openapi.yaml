@@ -51,7 +51,7 @@ paths:
     delete:
       $ref: ../swagger/path/wallet/transactions/{id}/delete.yaml
 
-  /statistics:
+  /transactions/statistics:
     get:
       $ref: ../swagger/path/wallet/statistics/get.yaml
 
