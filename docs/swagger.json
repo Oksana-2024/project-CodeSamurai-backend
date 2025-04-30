@@ -1,1 +1,1471 @@
-{}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Money Guard App",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "API documentation for Money Guard App — track your finances with ease."
+  },
+  "servers": [
+    {
+      "url": "https://project-codesamurai-backend.onrender.com",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Endpoints for user registration, login, and logout."
+    },
+    {
+      "name": "User",
+      "description": "Endpoints for retrieving or updating the authenticated user's profile."
+    },
+    {
+      "name": "Transactions",
+      "description": "Endpoints for managing income and expense transactions."
+    },
+    {
+      "name": "Categories",
+      "description": "Endpoints for viewing available saving and spending categories."
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "registerUser",
+        "description": "This endpoint allows a new user to create an account by providing a name, valid email, and password. The email must be unique. Password must be at least 6 characters and no more than 64. On successful registration, the user receives their name, email, and an authentication token.",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "User's name",
+                    "type": "string",
+                    "format": "full-name",
+                    "minLength": 2,
+                    "maxLength": 20,
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "description": "User's email",
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 64,
+                    "example": "johnd@gmail.com"
+                  },
+                  "password": {
+                    "description": "User's password",
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 6,
+                    "maxLength": 20,
+                    "example": "pCVVJHbCsY57"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "johnd@gmail.com"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login an existing user",
+        "operationId": "loginUser",
+        "description": "This endpoint allows an existing user to log in by providing a valid email and password. On success, it returns the user's name, email, and a JWT authentication token.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "description": "User's email",
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 64,
+                    "example": "johnd@gmail.com"
+                  },
+                  "password": {
+                    "description": "User's password",
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 6,
+                    "maxLength": 20,
+                    "example": "pCVVJHbCsY57"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "johnd@gmail.com"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://example.com/photo.jpg"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Log out user",
+        "operationId": "logoutUser",
+        "description": "Ends user session by invalidating the access token. Requires valid Bearer token in the `Authorization` header.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get current user profile",
+        "operationId": "getUserProfile",
+        "description": "Retrieve the authenticated user's profile information.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved current user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully retrieved the user profile information!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "email",
+                        "balance"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "example@mail.com"
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 50253.12
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update current user profile",
+        "operationId": "updateUserProfile",
+        "description": "Update user profile with provided data.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 20,
+                    "example": "John Doe"
+                  },
+                  "photo": {
+                    "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL $anchor: and can be used to personalize the user's profile page.\n",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched a user profile!"
+                    },
+                    "data": {
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "photo": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Get user's transactions with pagination and sorting",
+        "operationId": "getTransactions",
+        "description": "Retrieve a paginated and sorted list of transactions for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "description": "Sort order of the transactions",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "transactions",
+                    "pageInfo"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully retrieved transactions"
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "date": {
+                            "description": "ISO 8601 formatted date of the transaction.",
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2025-04-01T00:00:00.000Z"
+                          },
+                          "type": {
+                            "description": "Type of the transaction. Allowed values are 'income' or 'expense'.",
+                            "type": "string",
+                            "enum": [
+                              "income",
+                              "expense"
+                            ],
+                            "example": "income",
+                            "default": "income"
+                          },
+                          "categoryId": {
+                            "description": "A valid MongoDB ObjectId representing the category of the transaction.",
+                            "type": "string",
+                            "pattern": "^[0-9a-fA-F]{24}$",
+                            "example": "680a680d4d3d230f60d30fc1"
+                          },
+                          "sum": {
+                            "description": "The amount of the transaction. Must be a positive number.",
+                            "type": "number",
+                            "format": "float",
+                            "example": 15423.6
+                          },
+                          "comment": {
+                            "description": "Optional comment or note related to the transaction. Can be left empty.",
+                            "type": "string",
+                            "example": "Products in the supermarket",
+                            "default": " "
+                          }
+                        }
+                      }
+                    },
+                    "pageInfo": {
+                      "type": "object",
+                      "required": [
+                        "page",
+                        "perPage",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 8
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 11
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Create a new transaction",
+        "operationId": "createTransaction",
+        "description": "Create a new income or expense transaction by providing the required details in the request body.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "date",
+                  "type",
+                  "categoryId",
+                  "sum"
+                ],
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO 8601 formatted date of the transaction.",
+                    "example": "2025-04-01T00:00:00.000Z"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ],
+                    "default": "income",
+                    "description": "Type of the transaction. Must be either 'income' or 'expense'.",
+                    "example": "income"
+                  },
+                  "categoryId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{24}$",
+                    "description": "MongoDB ObjectId of the transaction category.",
+                    "example": "680a680d4d3d230f60d30fc1"
+                  },
+                  "sum": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0.01,
+                    "description": "Positive numeric value representing the transaction amount.",
+                    "example": 15423.6
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Optional note or description for the transaction.",
+                    "default": "",
+                    "example": "Products in the supermarket"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created transaction.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "transaction",
+                    "balance"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Transaction created successfully."
+                    },
+                    "transaction": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "description": "ISO 8601 formatted date of the transaction.",
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-04-01T00:00:00.000Z"
+                        },
+                        "type": {
+                          "description": "Type of the transaction. Allowed values are 'income' or 'expense'.",
+                          "type": "string",
+                          "enum": [
+                            "income",
+                            "expense"
+                          ],
+                          "example": "income",
+                          "default": "income"
+                        },
+                        "categoryId": {
+                          "description": "A valid MongoDB ObjectId representing the category of the transaction.",
+                          "type": "string",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "example": "680a680d4d3d230f60d30fc1"
+                        },
+                        "sum": {
+                          "description": "The amount of the transaction. Must be a positive number.",
+                          "type": "number",
+                          "format": "float",
+                          "example": 15423.6
+                        },
+                        "comment": {
+                          "description": "Optional comment or note related to the transaction. Can be left empty.",
+                          "type": "string",
+                          "example": "Products in the supermarket",
+                          "default": " "
+                        }
+                      }
+                    },
+                    "balance": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "Updated user balance after the transaction.",
+                      "example": 54827.54
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "patch": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Update a transaction",
+        "operationId": "updateTransaction",
+        "description": "Update an existing transaction by its ID with the provided data.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the transaction to update.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "67cece57cf044b5afacf7749"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "categoryId",
+                  "sum"
+                ],
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO 8601 formatted date of the transaction.",
+                    "example": "2025-04-01T00:00:00.000Z"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ],
+                    "default": "income",
+                    "description": "Type of the transaction.",
+                    "example": "income"
+                  },
+                  "categoryId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{24}$",
+                    "description": "MongoDB ObjectId representing the category.",
+                    "example": "680a680d4d3d230f60d30fc1"
+                  },
+                  "sum": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0.01,
+                    "description": "Positive number representing the transaction amount.",
+                    "example": 15423.6
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Optional comment for the transaction.",
+                    "example": "Products in the supermarket"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "status",
+                    "message",
+                    "transaction",
+                    "balance"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Transaction successfully updated."
+                    },
+                    "transaction": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "description": "ISO 8601 formatted date of the transaction.",
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-04-01T00:00:00.000Z"
+                        },
+                        "type": {
+                          "description": "Type of the transaction. Allowed values are 'income' or 'expense'.",
+                          "type": "string",
+                          "enum": [
+                            "income",
+                            "expense"
+                          ],
+                          "example": "income",
+                          "default": "income"
+                        },
+                        "categoryId": {
+                          "description": "A valid MongoDB ObjectId representing the category of the transaction.",
+                          "type": "string",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "example": "680a680d4d3d230f60d30fc1"
+                        },
+                        "sum": {
+                          "description": "The amount of the transaction. Must be a positive number.",
+                          "type": "number",
+                          "format": "float",
+                          "example": 15423.6
+                        },
+                        "comment": {
+                          "description": "Optional comment or note related to the transaction. Can be left empty.",
+                          "type": "string",
+                          "example": "Products in the supermarket",
+                          "default": " "
+                        }
+                      }
+                    },
+                    "balance": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "Updated user balance after transaction update.",
+                      "example": 1000.5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Delete a transaction",
+        "operationId": "deleteTransaction",
+        "description": "Delete a transaction by its unique identifier.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the transaction to delete.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "67cece57cf044b5afacf7749"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction successfully deleted, balance updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "balance"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Transaction successfully deleted."
+                    },
+                    "balance": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "Updated user balance after deletion.",
+                      "example": 1000.5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transactions/statistics": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Get user's transactions summary by period",
+        "operationId": "getSummaryByPeriod",
+        "description": "Retrieve a summary of the user's transactions for a specified month and year.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "description": "Four-digit year (e.g. 2024)",
+            "schema": {
+              "type": "integer",
+              "example": 2022
+            }
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "required": true,
+            "description": "Month number (01-12)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12,
+              "example": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of the transactions summary for the period.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "totalBalance",
+                    "periodIncomeOutcome",
+                    "totalIncome",
+                    "totalExpense",
+                    "categoryExpenses",
+                    "periodTransactions"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found transactions for this period!"
+                    },
+                    "totalBalance": {
+                      "type": "number",
+                      "description": "User's current total balance.",
+                      "example": 52000
+                    },
+                    "periodIncomeOutcome": {
+                      "type": "number",
+                      "description": "Net difference between income and expenses for the selected period.",
+                      "example": 15250
+                    },
+                    "totalIncome": {
+                      "type": "number",
+                      "description": "Total income for the selected period.",
+                      "example": 17000
+                    },
+                    "totalExpense": {
+                      "type": "number",
+                      "description": "Total expenses for the selected period.",
+                      "example": 1751
+                    },
+                    "categoryExpenses": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      },
+                      "description": "Breakdown of expenses per category.",
+                      "example": {
+                        "products": 350.5,
+                        "car": 1350.5
+                      }
+                    },
+                    "periodTransactions": {
+                      "type": "number",
+                      "description": "Sum of all transactions (income + expenses) for the selected period",
+                      "example": 18751
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get all categories",
+        "operationId": "getAllCategories",
+        "description": "Retrieve a list of all available categories for a user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "categories"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully retrieved all categories."
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/categories"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "user": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "_id": {
+            "description": "A unique ID for the user in the database. Automatically generated when the user is created.\n",
+            "type": "string",
+            "example": "67cd81343b84f810f27e521f"
+          },
+          "name": {
+            "description": "The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.\n",
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20,
+            "example": "John Doe"
+          },
+          "email": {
+            "description": "The user's email address, used as a unique login credential. Must be a valid email format and no more than 64 characters long. This field is required for both registration and login.\n",
+            "type": "string",
+            "format": "email",
+            "maxLength": 64,
+            "example": "example@mail.com"
+          },
+          "password": {
+            "description": "The user's password. Must be between 6 and 20 characters. It must include at least:\n- one uppercase letter,\n- one lowercase letter,\n- one number,\n- one special character (!@#$%^&* etc).\nShould not contain whitespace. Required for account creation.\n",
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "example": "pCVVJHbCsY57"
+          },
+          "balance": {
+            "description": "The user's current financial balance represented as a number. This field is optional and defaults to 0.\nThe balance can be updated through transactions, displayed on the user's dashboard or profile page to show their current available balance in real-time.\n",
+            "type": "number",
+            "default": 0,
+            "example": 0
+          },
+          "photo": {
+            "description": "Optional URL to the user's profile photo. May be null. If provided, must be a valid image URL\nand can be used to personalize the user's profile page.\n",
+            "type": "string",
+            "format": "uri",
+            "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
+          }
+        }
+      },
+      "transactions": {
+        "type": "object",
+        "required": [
+          "_id",
+          "userId",
+          "date",
+          "type",
+          "categoryId",
+          "sum"
+        ],
+        "properties": {
+          "_id": {
+            "description": "A unique ID for the transaction in the database. Automatically generated when the transaction is created.\n",
+            "type": "string",
+            "example": "67cece57cf044b5afacf7749"
+          },
+          "userId": {
+            "description": "A required reference to the user who owns this resource. Must be a valid MongoDB ObjectId string corresponding to an existing user.\n",
+            "type": "string",
+            "format": "objectId",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "67cd81343b84f810f27e521f"
+          },
+          "date": {
+            "description": "ISO 8601 formatted date of the transaction.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-04-01T00:00:00.000Z"
+          },
+          "type": {
+            "description": "Type of the transaction. Allowed values are 'income' or 'expense'.",
+            "type": "string",
+            "enum": [
+              "income",
+              "expense"
+            ],
+            "example": "income",
+            "default": "income"
+          },
+          "categoryId": {
+            "description": "A valid MongoDB ObjectId representing the category of the transaction.",
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "680a680d4d3d230f60d30fc1"
+          },
+          "sum": {
+            "description": "The amount of the transaction. Must be a positive number.",
+            "type": "number",
+            "format": "float",
+            "example": 15423.6
+          },
+          "comment": {
+            "description": "Optional comment or note related to the transaction. Can be left empty.",
+            "type": "string",
+            "example": "Products in the supermarket",
+            "default": " "
+          }
+        }
+      },
+      "categories": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name"
+        ],
+        "properties": {
+          "_id": {
+            "description": "Unique identifier for the category. Automatically generated MongoDB ObjectId.",
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "680a680d4d3d230f60d30fc1"
+          },
+          "name": {
+            "description": "Descriptive name of the category (e.g. \"Main expenses\", \"Salary\").",
+            "type": "string",
+            "example": "Main expenses"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Bad Request error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "BadRequestError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "UnauthorizedError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found Error",
+        "content": {
+          "application\\json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "NotFoundError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Not Found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Conflict error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 409
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ConflictError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The user already exists. Please try another one."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 500
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Something went wrong"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
