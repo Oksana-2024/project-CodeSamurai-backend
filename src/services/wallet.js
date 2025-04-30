@@ -13,6 +13,8 @@ import {
   updateBalanceOnDelete,
 } from '../utils/balanceUtil.js';
 
+const EXCLUDE_FIELDS = '-userId -createdAt -updatedAt -__v';
+
 export const getTransactions = async (
   userId,
   { page = 1, perPage = 8, sortOrder = 'desc' } = {},
@@ -24,6 +26,7 @@ export const getTransactions = async (
       .sort({ date: sortOrder === 'asc' ? 1 : -1 })
       .skip(skip)
       .limit(perPage)
+      .select(EXCLUDE_FIELDS)
       .populate('categoryId', 'name'),
     TransactionsCollection.countDocuments({ userId }),
   ]);
@@ -58,7 +61,9 @@ export const createTransactions = async (userId, payload) => {
 
   const createdAndPopulatedTransaction = await TransactionsCollection.findById(
     newTransaction._id,
-  ).populate('categoryId', 'name');
+  )
+    .select(EXCLUDE_FIELDS + ' -_id')
+    .populate('categoryId', 'name');
 
   return {
     transaction: createdAndPopulatedTransaction,
@@ -70,7 +75,9 @@ export const deleteTransactions = async (id, userId) => {
   const transaction = await TransactionsCollection.findOne({
     _id: id,
     userId,
-  }).populate('categoryId', 'name');
+  })
+    .select(EXCLUDE_FIELDS)
+    .populate('categoryId', 'name');
 
   if (!transaction) {
     return null;
@@ -112,7 +119,9 @@ export const updateTransactions = async (id, payload, userId) => {
     { _id: id, userId },
     payload,
     { new: true },
-  ).populate('categoryId', 'name');
+  )
+    .select(EXCLUDE_FIELDS)
+    .populate('categoryId', 'name');
 
   return {
     transaction: updatedTransaction,
