@@ -80,6 +80,12 @@
                     "minLength": 6,
                     "maxLength": 20,
                     "example": "pCVVJHbCsY57"
+                  },
+                  "photo": {
+                    "description": "User's avatar",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
                   }
                 }
               }
@@ -93,9 +99,19 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "user",
+                    "token"
+                  ],
                   "properties": {
                     "user": {
                       "type": "object",
+                      "required": [
+                        "name",
+                        "email",
+                        "balance",
+                        "photo"
+                      ],
                       "properties": {
                         "name": {
                           "type": "string",
@@ -185,9 +201,19 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "user",
+                    "token"
+                  ],
                   "properties": {
                     "user": {
                       "type": "object",
+                      "required": [
+                        "name",
+                        "email",
+                        "balance",
+                        "photo"
+                      ],
                       "properties": {
                         "name": {
                           "type": "string",
@@ -205,7 +231,7 @@
                         "photo": {
                           "type": "string",
                           "format": "uri",
-                          "example": "https://example.com/photo.jpg"
+                          "example": "https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg"
                         }
                       }
                     },

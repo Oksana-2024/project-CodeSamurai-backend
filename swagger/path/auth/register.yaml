@@ -38,6 +38,11 @@ requestBody:
             minLength: 6
             maxLength: 20
             example: 'pCVVJHbCsY57'
+          photo:
+            description: "User's avatar"
+            type: string
+            format: uri
+            example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
 responses:
   '201':
     description: 'User successfully registered'
@@ -45,9 +50,17 @@ responses:
       application/json:
         schema:
           type: object
+          required:
+            - user
+            - token
           properties:
             user:
               type: object
+              required:
+                - name
+                - email
+                - balance
+                - photo
               properties:
                 name:
                   type: string
