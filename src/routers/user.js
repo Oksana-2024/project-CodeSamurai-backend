@@ -9,22 +9,20 @@ import {
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { isValidId } from '../middlewares/isValidID.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
 
-const currentUsersRouter = Router();
+const usersRouter = Router();
 
-currentUsersRouter.use(authenticate);
+usersRouter.use(authenticate);
 
-currentUsersRouter.get('/', ctrlWrapper(userProfileController));
+usersRouter.get('/current', ctrlWrapper(userProfileController));
 
-currentUsersRouter.patch(
-  '/:id',
-  isValidId,
+usersRouter.patch(
+  '/current',
   upload.single('photo'),
   validateBody(updateUserProfileSchema),
   ctrlWrapper(updateUserProfileController),
 );
 
-export default currentUsersRouter;
+export default usersRouter;

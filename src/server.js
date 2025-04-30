@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import currentUsersRouter from './routers/user.js';
+import usersRouter from './routers/user.js';
 import transactionsRouter from './routers/wallet.js';
 import categoriesRouter from './routers/categories.js';
 
@@ -25,7 +25,7 @@ export const startServer = () => {
 
   app.use('/transactions', transactionsRouter);
   app.use('/categories', categoriesRouter);
-  app.use('/currentUsers', currentUsersRouter);
+  app.use('/users', usersRouter);
   app.use('/uploads', express.static(UPLOAD_DIR));
   app.use('/api-docs', swaggerDocs());
   app.use('/auth', authRouter);
