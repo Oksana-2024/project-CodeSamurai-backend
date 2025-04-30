@@ -1,24 +1,33 @@
 tags:
   - Transactions
-summary: Get list of user's statistics transactions by period
-operationId: getTransactionsByPeriod
-description: Get list of user's statistics transactions by period
+summary: Get user's transactions summary by period
+operationId: getSummaryByPeriod
+description: Retrieve a summary of the user's transactions for a specified month and year.
 security:
   - bearerAuth: []
+
 parameters:
   - in: query
     name: year
+    required: true
+    description: Four-digit year (e.g. 2024)
     schema:
-      type: number
+      type: integer
       example: 2022
+
   - in: query
     name: month
+    required: true
+    description: Month number (01-12)
     schema:
-      type: number
+      type: integer
+      minimum: 01
+      maximum: 12
       example: 05
+
 responses:
   '200':
-    description: 'Successfully found transactions for this period!'
+    description: 'Successful retrieval of the transactions summary for the period.'
     content:
       application/json:
         schema:
@@ -36,35 +45,45 @@ responses:
             status:
               type: integer
               example: 200
+
             message:
               type: string
               example: 'Successfully found transactions for this period!'
+
             totalBalance:
               type: number
+              description: User's current total balance.
               example: 52000
-              #Поточний загальний баланс
+
             periodIncomeOutcome:
               type: number
+              description: Net difference between income and expenses for the selected period.
               example: 15250
-              #Різниця між доходами та витратами за період
+
             totalIncome:
               type: number
+              description: Total income for the selected period.
               example: 17000
-              #Загальна сума доходів за період
+
             totalExpense:
               type: number
+              description: Total expenses for the selected period.
               example: 1751
-              #Загальна сума витрат за період
+
             categoryExpenses:
               type: object
+              additionalProperties:
+                type: number
+              description: Breakdown of expenses per category.
               example:
-                "products": 350.50
-                "car": 1350.50
-              #Витрати по категоріях за період
+                'products': 350.50
+                'car': 1350.50
+
             periodTransactions:
               type: number
+              description: Sum of all transactions (income + expenses) for the selected period
               example: 18751
-              #Загальна сума всіх транзакцій (доходи + витрати) за період
+
   '400':
     $ref: ../../../components/responses/400.yaml
   '401':

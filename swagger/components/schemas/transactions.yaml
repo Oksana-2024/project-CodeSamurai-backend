@@ -1,53 +1,47 @@
 type: object
 required:
   - _id
+  - userId
   - date
   - type
   - categoryId
   - sum
-  - userId
 properties:
   _id:
-    description: A unique ID for the user in the database. Automatically generated when the transaction is created.
+    description: |
+      A unique ID for the transaction in the database. Automatically generated when the transaction is created.
     type: string
     example: 67cece57cf044b5afacf7749
   userId:
-    description: A unique ID for the user in the database. Expected to be a valid ObjectId format string.
-    pattern: '^[0-9a-fA-F]{24}$'
+    description: |
+      A required reference to the user who owns this resource. Must be a valid MongoDB ObjectId string corresponding to an existing user.
     type: string
+    format: objectId
+    pattern: '^[0-9a-fA-F]{24}$'
     example: 67cd81343b84f810f27e521f
   date:
-    description: Date of the transaction
+    description: ISO 8601 formatted date of the transaction.
     type: string
     format: date-time
     example: '2025-04-01T00:00:00.000Z'
   type:
-    description: Type of the transaction. Expected to be 'income' or 'expense'
+    description: Type of the transaction. Allowed values are 'income' or 'expense'.
     type: string
     enum: ['income', 'expense']
     example: income
     default: income
   categoryId:
-    description: A unique ID for the category in the database. Expected to be a valid ObjectId format string.
-    pattern: '^[0-9a-fA-F]{24}$'
+    description: A valid MongoDB ObjectId representing the category of the transaction.
     type: string
+    pattern: '^[0-9a-fA-F]{24}$'
     example: 680a680d4d3d230f60d30fc1
   sum:
     description: The amount of the transaction. Must be a positive number.
     type: number
+    format: float
     example: 15423.6
   comment:
-    description: Optional comment for the transaction. Can be an empty string
+    description: Optional comment or note related to the transaction. Can be left empty.
     type: string
     example: Products in the supermarket
     default: ' '
-  createdAt:
-    description: Transaction's creation date
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'
-  updatedAt:
-    description: Transaction's last update date
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'

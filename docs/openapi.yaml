@@ -5,27 +5,41 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is a documentation of Money Guard App
+  description: API documentation for Money Guard App — track your finances with ease.
+
 tags:
   - name: Auth
-    description: Auth operations.
-  - name: Current Users
-    description: Current Users operations.
+    description: Endpoints for user registration, login, and logout.
+  - name: User
+    description: Endpoints for retrieving or updating the authenticated user's profile.
   - name: Transactions
-    description: Transactions operations.
+    description: Endpoints for managing income and expense transactions.
   - name: Categories
-    description: Categories operations.
+    description: Endpoints for viewing available saving and spending categories.
 
 servers:
   - url: https://project-codesamurai-backend.onrender.com
+    description: Production server
   - url: http://localhost:3000
+    description: Local development server
+
 paths:
-  /balance:
+  /auth/register:
+    post:
+      $ref: ../swagger/path/auth/register.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/path/auth/login.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/path/auth/logout.yaml
+
+  /users/current:
     get:
-      $ref: ../swagger/path/wallet/balance/get.yaml
-  /statistics:
-    get:
-      $ref: ../swagger/path/wallet/statistics/get.yaml
+      $ref: ../swagger/path/user/get.yaml
+    patch:
+      $ref: ../swagger/path/user/patch.yaml
+
   /transactions:
     get:
       $ref: ../swagger/path/wallet/transactions/get.yaml
@@ -36,26 +50,23 @@ paths:
       $ref: ../swagger/path/wallet/transactions/{id}/patch.yaml
     delete:
       $ref: ../swagger/path/wallet/transactions/{id}/delete.yaml
-  /currentUsers:
+
+  /transactions/statistics:
     get:
-      $ref: ../swagger/path/user/get.yaml
-  /currentUsers/{id}:
-    patch:
-      $ref: ../swagger/path/user/{id}/patch.yaml
-  /auth/register:
-    post:
-      $ref: '../swagger/path/auth/register.yaml'
-  /auth/login:
-    post:
-      $ref: '../swagger/path/auth/login.yaml'
-  /auth/logout:
-    post:
-      $ref: ../swagger/path/auth/logout.yaml
+      $ref: ../swagger/path/wallet/statistics/get.yaml
+
   /categories:
     get:
       $ref: ../swagger/path/categories/get.yaml
+
 components:
+  schemas:
+    user:
+      $ref: ../swagger/components/schemas/user.yaml
+    transactions:
+      $ref: ../swagger/components/schemas/transactions.yaml
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT

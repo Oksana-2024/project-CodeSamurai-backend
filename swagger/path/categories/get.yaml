@@ -1,13 +1,14 @@
 tags:
   - Categories
-summary: Get All Categories
+summary: Get all categories
 operationId: getAllCategories
-description: Get  All Categories
+description: Retrieve a list of all available categories for a user.
 security:
   - bearerAuth: []
+
 responses:
   '200':
-    description: Successfully found all categories!
+    description: Successfully retrieved all categories.
     content:
       application/json:
         schema:
@@ -20,10 +21,12 @@ responses:
             status:
               type: integer
               example: 200
+
             message:
               type: string
-              example: Successfully found all categories!
-            category:
+              example: Successfully retrieved all categories.
+
+            categories:
               type: array
               items:
                 type: object

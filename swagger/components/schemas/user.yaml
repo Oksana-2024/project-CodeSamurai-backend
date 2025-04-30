@@ -14,7 +14,7 @@ properties:
     description: |
       The user's full name. Must contain only letters (Latin characters), with a minimum of 3 and a maximum of 20 characters. Special characters and numbers are not allowed. This field is required for registration.
     type: string
-    minLength: 3
+    minLength: 2
     maxLength: 20
     example: 'John Doe'
   email:

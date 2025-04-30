@@ -1,17 +1,21 @@
 tags:
   - Transactions
-summary: Update transaction
+summary: Update a transaction
 operationId: updateTransaction
-description: Update transaction with provided data
+description: Update an existing transaction by its ID with the provided data.
 security:
   - bearerAuth: []
+
 parameters:
   - in: path
     name: id
     required: true
+    description: ID of the transaction to update.
     schema:
       type: string
+      pattern: '^[0-9a-fA-F]{24}$'
       example: '67cece57cf044b5afacf7749'
+
 requestBody:
   content:
     application/json:
@@ -21,38 +25,39 @@ requestBody:
           - categoryId
           - sum
         properties:
-          userId:
-            description: A unique ID for the user in the database. Expected to be a valid ObjectId format string.
-            pattern: '^[0-9a-fA-F]{24}$'
-            type: string
-            example: 67cd81343b84f810f27e521f
           date:
-            description: Date of the transaction
             type: string
             format: date-time
+            description: ISO 8601 formatted date of the transaction.
             example: '2025-04-01T00:00:00.000Z'
+
           type:
-            description: Type of the transaction. Expected to be 'income' or 'expense'
             type: string
             enum: ['income', 'expense']
-            example: income
             default: income
+            description: Type of the transaction.
+            example: income
+
           categoryId:
-            description: A unique ID for the category in the database. Expected to be a valid ObjectId format string.
+            type: string
             pattern: '^[0-9a-fA-F]{24}$'
-            type: string
+            description: MongoDB ObjectId representing the category.
             example: 680a680d4d3d230f60d30fc1
+
           sum:
-            description: The amount of the transaction. Must be a positive number.
             type: number
+            format: float
+            minimum: 0.01
+            description: Positive number representing the transaction amount.
             example: 15423.6
+
           comment:
-            description: 'Comment of the transaction'
             type: string
+            description: Optional comment for the transaction.
             example: Products in the supermarket
 responses:
   '200':
-    description: 'Successfully patched a user transactions!'
+    description: 'Transaction successfully updated.'
     content:
       application/json:
         schema:
@@ -65,14 +70,45 @@ responses:
             status:
               type: integer
               example: 200
+
             message:
               type: string
-              example: 'Successfully patched a user transactions!'
+              example: 'Transaction successfully updated.'
+
             transaction:
               type: object
-              $ref: ../../../../components/schemas/transactions.yaml
+              properties:
+                date:
+                  description: ISO 8601 formatted date of the transaction.
+                  type: string
+                  format: date-time
+                  example: '2025-04-01T00:00:00.000Z'
+                type:
+                  description: Type of the transaction. Allowed values are 'income' or 'expense'.
+                  type: string
+                  enum: ['income', 'expense']
+                  example: income
+                  default: income
+                categoryId:
+                  description: A valid MongoDB ObjectId representing the category of the transaction.
+                  type: string
+                  pattern: '^[0-9a-fA-F]{24}$'
+                  example: 680a680d4d3d230f60d30fc1
+                sum:
+                  description: The amount of the transaction. Must be a positive number.
+                  type: number
+                  format: float
+                  example: 15423.6
+                comment:
+                  description: Optional comment or note related to the transaction. Can be left empty.
+                  type: string
+                  example: Products in the supermarket
+                  default: ' '
+
             balance:
               type: number
+              format: float
+              description: Updated user balance after transaction update.
               example: 1000.50
   '400':
     $ref: ../../../../components/responses/400.yaml

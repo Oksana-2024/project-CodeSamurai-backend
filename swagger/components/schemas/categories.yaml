@@ -4,20 +4,11 @@ required:
   - name
 properties:
   _id:
-    description: A unique ID for the user in the database. Automatically generated when the category is created.
+    description: Unique identifier for the category. Automatically generated MongoDB ObjectId.
     type: string
+    pattern: '^[0-9a-fA-F]{24}$'
     example: 680a680d4d3d230f60d30fc1
   name:
-    description: Name of the category
+    description: Descriptive name of the category (e.g. "Main expenses", "Salary").
     type: string
-    example: 'Main expenses'
-  createdAt:
-    description: Transaction's creation date
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'
-  updatedAt:
-    description: Transaction's last update date
-    type: string
-    format: date-time
-    example: '2025-04-01T00:00:00.000Z'
+    example: Main expenses
