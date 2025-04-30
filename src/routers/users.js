@@ -17,10 +17,10 @@ const currentUsersRouter = Router();
 
 currentUsersRouter.use(authenticate);
 
-currentUsersRouter.get('/', ctrlWrapper(userProfileController));
+currentUsersRouter.get('/current', ctrlWrapper(userProfileController));
 
 currentUsersRouter.patch(
-  '/:id',
+  '/current',
   isValidId,
   upload.single('photo'),
   validateBody(updateUserProfileSchema),
