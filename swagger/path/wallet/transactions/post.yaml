@@ -1,11 +1,13 @@
 tags:
   - Transactions
-summary: Create transactions
-operationId: createTransactions
-description: 'Create a transaction with payload'
+summary: Create a new transaction
+operationId: createTransaction
+description: Create a new income or expense transaction by providing the required details in the request body.
 security:
   - bearerAuth: []
+
 requestBody:
+  required: true
   content:
     application/json:
       schema:
@@ -16,43 +18,41 @@ requestBody:
           - categoryId
           - sum
         properties:
-          _id:
-            description: A unique ID for the user in the database. Automatically generated when the transaction is created.
-            type: string
-            example: 67cece57cf044b5afacf7749
-          userId:
-            description: A unique ID for the user in the database. Expected to be a valid ObjectId format string.
-            pattern: '^[0-9a-fA-F]{24}$'
-            type: string
-            example: 67cd81343b84f810f27e521f
           date:
-            description: Date of the transaction
             type: string
             format: date-time
+            description: ISO 8601 formatted date of the transaction.
             example: '2025-04-01T00:00:00.000Z'
+
           type:
-            description: Type of the transaction. Expected to be 'income' or 'expense'
             type: string
             enum: ['income', 'expense']
-            example: income
             default: income
+            description: Type of the transaction. Must be either 'income' or 'expense'.
+            example: income
+
           categoryId:
-            description: A unique ID for the category in the database. Expected to be a valid ObjectId format string.
+            type: string
             pattern: '^[0-9a-fA-F]{24}$'
-            type: string
+            description: MongoDB ObjectId of the transaction category.
             example: 680a680d4d3d230f60d30fc1
+
           sum:
-            description: The amount of the transaction. Must be a positive number.
             type: number
+            format: float
+            minimum: 0.01
+            description: Positive numeric value representing the transaction amount.
             example: 15423.6
+
           comment:
-            description: Optional comment for the transaction. Can be an empty string
             type: string
+            description: Optional note or description for the transaction.
+            default: ''
             example: Products in the supermarket
-            default: ' '
+
 responses:
   '201':
-    description: Successfully created transactions!
+    description: Successfully created transaction.
     content:
       application/json:
         schema:
@@ -66,14 +66,45 @@ responses:
             status:
               type: integer
               example: 201
+
             message:
               type: string
-              example: Successfully created transactions!
+              example: Transaction created successfully.
+
             transaction:
               type: object
-              $ref: ../../../components/schemas/transactions.yaml
+              properties:
+                date:
+                  description: ISO 8601 formatted date of the transaction.
+                  type: string
+                  format: date-time
+                  example: '2025-04-01T00:00:00.000Z'
+                type:
+                  description: Type of the transaction. Allowed values are 'income' or 'expense'.
+                  type: string
+                  enum: ['income', 'expense']
+                  example: income
+                  default: income
+                categoryId:
+                  description: A valid MongoDB ObjectId representing the category of the transaction.
+                  type: string
+                  pattern: '^[0-9a-fA-F]{24}$'
+                  example: 680a680d4d3d230f60d30fc1
+                sum:
+                  description: The amount of the transaction. Must be a positive number.
+                  type: number
+                  format: float
+                  example: 15423.6
+                comment:
+                  description: Optional comment or note related to the transaction. Can be left empty.
+                  type: string
+                  example: Products in the supermarket
+                  default: ' '
+
             balance:
               type: number
+              format: float
+              description: Updated user balance after the transaction.
               example: 54827.54
   '400':
     $ref: ../../../components/responses/400.yaml

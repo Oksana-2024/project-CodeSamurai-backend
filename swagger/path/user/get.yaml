@@ -1,13 +1,14 @@
 tags:
-  - Current Users
-summary: Get user profile
+  - User
+summary: Get current user profile
 operationId: getUserProfile
-description: 'Get user profile'
+description: Retrieve the authenticated user's profile information.
 security:
   - bearerAuth: []
+
 responses:
   '200':
-    description: 'Successfully fetched a user profile!'
+    description: 'Successfully retrieved current user profile.'
     content:
       application/json:
         schema:
@@ -20,27 +21,32 @@ responses:
             status:
               type: integer
               example: 200
+
             message:
               type: string
-              example: 'Successfully fetched a user profile!'
+              example: 'Successfully retrieved the user profile information!'
+
             data:
               type: object
-              $ref: ../../components/schemas/user.yaml
+              required:
+                - name
+                - email
+                - balance
               properties:
-                _id:
-                  type: string
-                  example: 67cd81343b84f810f27e521f
                 name:
                   type: string
-                  example: 'John Doe'
+                  example: John Doe
                 email:
                   type: string
-                  example: 'example@mail.com'
+                  format: email
+                  example: example@mail.com
                 photo:
                   type: string
-                  example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
+                  format: uri
+                  example: https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg
                 balance:
                   type: number
+                  format: float
                   example: 50253.12
   '401':
     $ref: ../../components/responses/401.yaml
