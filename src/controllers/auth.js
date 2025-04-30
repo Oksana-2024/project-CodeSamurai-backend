@@ -35,10 +35,7 @@ export const loginUserController = async (req, res) => {
   const user = await findUserByEmail(req.body.email);
 
   if (!user) {
-    throw createHttpError(
-      401,
-      'User is not found. Please check the email or sign up for a new account.',
-    );
+    throw createHttpError(401, 'Email or password is incorrect');
   }
 
   const isPwdEqual = await bcrypt.compare(req.body.password, user.password);
