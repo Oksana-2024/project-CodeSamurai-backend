@@ -10,7 +10,7 @@ description:
 security: []
 requestBody:
   content:
-    multipart/form-data:
+    application/json:
       schema:
         type: object
         required:
@@ -62,7 +62,7 @@ responses:
                 photo:
                   type: string
                   format: uri
-                  example: 'https://res.cloudinary.com/dlejcfotr/image/upload/v1743263889/cl4t7hdyrzxbzxhqeh5i.jpg'
+                  example: null
             token:
               type: string
               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
